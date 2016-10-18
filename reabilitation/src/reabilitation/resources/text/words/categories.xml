@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<categories>
+<category name="Животные"><word>Кошка</word><word>Собака</word><word>Лисица</word><word>Медведь</word><word>Куница</word><word>Жираф</word><word>Лошадь</word><word>Волк</word><word>Заяц</word><word>Ондатра</word><word>Бегемот</word><word>Слон</word><word>Верблюд</word><word>Лев</word><word>Пума</word><word>Мышь</word><word>Олень</word><word>Тушканчик</word><word>Зебра</word></category>
+<category name="Мебель"><word>Стол</word><word>Стул</word><word>Кровать</word><word>Шкаф</word><word>Табурет</word><word>Буфет</word><word>Комод</word><word>Гардероб</word><word>Трюмо</word><word>Диван</word><word>Тахта</word><word>Этажерка</word><word>Кресло</word><word>Кушетка</word></category>
+<category name="Цвета"><word>Красный</word><word>Синий</word><word>Зеленый</word><word>Желтый</word><word>Фиолетвый</word><word>Голубой</word><word>Оранжевый</word><word>Розовый</word><word>Лиловый</word><word>Пурпурный</word><word>Малиновый</word><word>Сиреневый</word><word>Коричневый</word></category>
+<category name="Растения"><word>Роза</word><word>Ель</word><word>Одуванчик</word><word>Ива</word><word>Вереск</word><word>Малина</word><word>Полынь</word><word>Кактус</word><word>Береза</word><word>Пион</word><word>Пшеница</word><word>Свекла</word><word>Морковь</word></category>
+<category name="Инструменты"><word>Гитара</word><word>Скрипка</word><word>Виолончель</word><word>Флейта</word><word>Барабан</word><word>Арфа</word><word>Волынка</word><word>Фортепиано</word><word>Саксафон</word><word>Труба</word><word>Балалайка</word><word>Мандолина</word><word>Гармошка</word></category>
+<category name="Посуда"><word>Ложка</word><word>Вилка</word><word>Нож</word><word>Тарелка</word><word>Кастрюля</word><word>Миска</word><word>Сковородка</word><word>Дуршлаг</word><word>Ваза</word><word>Чашка</word><word>Кружка</word><word>Блюдце</word><word>Стакан</word></category>
+</categories>

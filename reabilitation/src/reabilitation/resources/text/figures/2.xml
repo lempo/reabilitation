@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<set>
+<topview image="resources/image/figures/2/topview.png">
+<point image="resources/image/figures/2/point1.png" x="10" y="200" />
+<point image="resources/image/figures/2/point2.png" x="390" y="200" />
+<point image="resources/image/figures/2/point3.png" x="200" y="10" />
+<point image="resources/image/figures/2/point4.png" x="200" y="390" />
+</topview>
+</set>

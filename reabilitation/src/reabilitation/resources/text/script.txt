@@ -1,0 +1,17 @@
+Dim objService, colDiskDrives, objItem 
+Dim DiskInfo, objClassProperty  
+
+Set objService = GetObject("winmgmts:\\.\Root\CIMV2")
+Set colDiskDrives = objService.ExecQuery("SELECT * FROM Win32_DiskDrive")
+
+DiskInfo = ""
+
+For Each objItem in colDiskDrives
+    If objItem.InterfaceType = "USB" Then
+	
+	Else
+	DiskInfo = DiskInfo & objItem.SerialNumber
+	End If
+Next
+
+WScript.Echo DiskInfo

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<words>
+<category name="Биология"><word first="бел" second="ка" /><word first="вен" second="чик" /><word first="е" second="нот" /><word first="же" second="лудь" /><word first="за" second="вязь" /><word first="зра" second="чок" /><word first="и" second="кра" /><word first="каль" second="мар" /><word first="кле" second="тка" /><word first="ког" second="ти" /><word first="ко" second="кон" /><word first="ко" second="ралл" /><word first="ко" second="чан" /><word first="крыль" second="я" /><word first="шиш" second="ка" /><word first="цве" second="ток" /></category>
+<category name="География"><word first="гло" second="бус" /><word first="во" second="сток" /><word first="рель" second="еф" /><word first="гло" second="бус" /></category>
+<category name="Искусство"><word first="гри" second="фон" /><word first="э" second="маль" /><word first="гри" second="фон" /><word first="э" second="маль" /></category>
+<category name="История"><word first="ар" second="тель" /><word first="вас" second="сал" /><word first="ар" second="тель" /><word first="вас" second="сал" /></category>
+<category name="Математика"><word first="век" second="тор" /><word first="гра" second="дус" /><word first="ин" second="декс" /><word first="квад" second="рат" /><word first="лем" second="ма" /><word first="масш" second="таб" /><word first="мо" second="дуль" /><word first="тан" second="генс" /></category>
+<category name="Физика"><word first="ам" second="пер" /><word first="влаж" second="ность" /><word first="гра" second="дус" /><word first="жид" second="кость" /><word first="за" second="ряд" /><word first="им" second="пульс" /></category>
+<category name="Химия"><word first="крис" second="талл" /><word first="раст" second="вор" /><word first="син" second="тез" /><word first="крис" second="талл" /></category>
+<category name="Экология"><word first="кли" second="мат" /><word first="кли" second="мат" /><word first="кли" second="мат" /><word first="кли" second="мат" /></category>
+</words>
