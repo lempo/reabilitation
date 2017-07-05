@@ -28,6 +28,8 @@ import customuiandrender.ButtonCustomUI;
 import customuiandrender.SliderCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
+import dialogs.Dialogs;
+import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
 import reabilitation.Utills;
@@ -201,7 +203,12 @@ public class Listen extends AbstractTask {
 	public void showResults() {
 		totalTime = new Date().getTime() - startTime - panel.getPauseTime();
 		correct = panel.getCorrectPercent();
-		HTTPClient.saveResult(username, userCardNumber, taskName, correct, taskGroupName);
+		try {
+			HTTPClient.saveResult(username, userCardNumber, taskName, correct, taskGroupName);
+		} catch (ServerConnectionException e) {
+			e.printStackTrace();
+			Dialogs.showServerConnectionErrorDialog(e);
+		}
 		showStandartResults();
 	}
 

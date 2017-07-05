@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <interface>
+<string key="error" value="Ошибка"/>
+<string key="hdd_serial_err" value="Не удалось считать серийный номер жесткого диска"/>
+<string key="disk_permissions_err" value="Не удается записать файлы на диск или считать с диска. Убедитесь, что вы запускаете программу от имени администратора."/>
+<string key="server_connecion_err" value="Не удается соединиться с сервером. Убедитесь, что нет проблем с интернет-соединением."/>
+<string key="files_broken_err" value="Файлы программы были повреждены. Пожалуйста, переустановите программу."/>
+<string key="fill_all_fields" value="Заполните все поля"/>
+<string key="key_already_registered" value="Этот ключ уже зарегистрирован"/>
+<string key="key_not_exist" value="Такой ключ не существует"/>
+<string key="error_dailog_content" value="Если у вас не получается решить проблему самостоятельно, сделайте скриншот ошибки и пришлите его на адрес support@komplimed.ru"/>
+<string key="lisence_expired" value="Срок лицензии истек!"/>
+
 <string key="pause" value="ПАУЗА"/>
 <string key="answers" value="ПРАВИЛЬНЫЕ_ОТВЕТЫ"/>
 <string key="words" value="СЛОВА:"/>

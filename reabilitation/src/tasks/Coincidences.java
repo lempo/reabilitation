@@ -22,6 +22,8 @@ import customcomponent.CustomDialog;
 import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
+import dialogs.Dialogs;
+import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
 import reabilitation.Utills;
@@ -76,7 +78,12 @@ public class Coincidences extends AbstractTask {
 	public void showResults() {
 		totalTime = new Date().getTime() - startTime - pauseTime;
 		correct = (int) Math.round(((float) f / num) * 100.0);
-		HTTPClient.saveResult(username, userCardNumber, taskName, correct, taskGroupName);
+		try {
+			HTTPClient.saveResult(username, userCardNumber, taskName, correct, taskGroupName);
+		} catch (ServerConnectionException e) {
+			e.printStackTrace();
+			Dialogs.showServerConnectionErrorDialog(e);
+		}
 		showStandartResults();
 	}
 

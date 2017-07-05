@@ -1,15 +1,19 @@
 package reabilitation;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 
 import javax.swing.*;
 
-import customcomponent.CustomDialog;
 import defaults.InterfaceTextDefaults;
+import dialogs.Dialogs;
+import exception.DiskPermissionsException;
+import exception.HddSerialScriptException;
+import exception.KeyAlreadyRegisteredException;
+import exception.KeyNotExistException;
+import exception.KeyNotRegisteredException;
+import exception.LisenceExpiredException;
+import exception.ProgramFilesBrokenException;
+import exception.ServerConnectionException;
 
 /**
  * 
@@ -20,43 +24,44 @@ import defaults.InterfaceTextDefaults;
 public class Main {
 	public static void main(String[] args) {
 
-		HTTPClient.setSERVER(Utills.getAppServer());
-
+		try {
+			HTTPClient.setSERVER(Utills.getAppServer());
+		} catch (ProgramFilesBrokenException e1) {
+			e1.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e1);
+			return;
+		}
 		File f = new File(Utills.getFilePath() + "/config");
-		// already registered
+		
+		// that means already registered because config exists
 		if (f.exists()) {
 			// check key
-			String key = Utills.getLicenceKey();
-			String username = Utills.getLicenceUserName();
-			if (HTTPClient.checkKey(key, username)) {
+			try {
+				String key = Utills.getLicenceKey();
+				String username = Utills.getLicenceUserName();
+				HTTPClient.checkKey(key, username);
 				JFrame app = new Reabilitation();
 				app.setVisible(true);
-				if (Utills.getCheckUpdatesAuto()) {
-					String location = HTTPClient.getVersion(Utills.getVersionDate());
-					if (location != null) {
-						// update
-						// show dialog
-						CustomDialog d1 = new CustomDialog(app,
-								InterfaceTextDefaults.getInstance().getDefault("do_update"),
-								InterfaceTextDefaults.getInstance().getDefault("yes"),
-								InterfaceTextDefaults.getInstance().getDefault("no"), false);
-						if (d1.getAnswer() == 1) {
-							try {
-								Process proc = Runtime.getRuntime().exec("java -jar updater.jar " + location);
-								System.exit(0);
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							}
-						} else
-							return;
-					}
-				}
-			} else {
-				JOptionPane.showConfirmDialog((java.awt.Component) null,
-						InterfaceTextDefaults.getInstance().getDefault("no_licence"),
-						InterfaceTextDefaults.getInstance().getDefault("licence_failed"),
-						javax.swing.JOptionPane.DEFAULT_OPTION);
+			} catch (DiskPermissionsException e) {
+				e.printStackTrace();
+				Dialogs.showDiskPermissionsErrorDialog(e);
+			} catch (ProgramFilesBrokenException e) {
+				e.printStackTrace();
+				Dialogs.showFilesBrokenErrorDialog(e);
+			} catch (HddSerialScriptException e) {
+				e.printStackTrace();
+				Dialogs.showHddSerialErrorDialog(e);
+			} catch (ServerConnectionException e) {
+				e.printStackTrace();
+				Dialogs.showServerConnectionErrorDialog(e);
+			} catch (KeyNotRegisteredException e) {
+				e.printStackTrace();
+				Dialogs.showNoLicenseErrorDialog(e);
+			} catch (LisenceExpiredException e) {
+				e.printStackTrace();
+				Dialogs.showLisenceExpiredErrorDialog();
 			}
+			
 		}
 		// not registered yet
 		else {
@@ -74,37 +79,39 @@ public class Main {
 
 			// create file
 			try {
-				f.createNewFile();
-				OutputStreamWriter bufferedWriter = new OutputStreamWriter(new FileOutputStream(f), "UTF8");
-				bufferedWriter.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
-				bufferedWriter.append("<config>\n");
-				bufferedWriter.append("<username>" + name.getText().trim() + "</username>\n");
-				bufferedWriter.append("<key>" + key.getText().trim() + "</key>\n");
-				bufferedWriter.append("<checkUpdatesAuto>false</checkUpdatesAuto>");
-				bufferedWriter.append("</config>");
-				bufferedWriter.flush();
-				bufferedWriter.close();
-
-				if (HTTPClient.registerKey(key.getText().trim(), name.getText().trim())) {
-					JFrame app = new Reabilitation();
-					app.setVisible(true);
-				} else {
-					f.delete();
-					JOptionPane.showConfirmDialog((java.awt.Component) null,
-							InterfaceTextDefaults.getInstance().getDefault("no_licence"),
-							InterfaceTextDefaults.getInstance().getDefault("licence_failed"),
-							javax.swing.JOptionPane.DEFAULT_OPTION);
-				}
+				Utills.createConfigFile(f, name.getText().trim(), key.getText().trim());
+				HTTPClient.registerKey(key.getText().trim(), name.getText().trim());
+				JFrame app = new Reabilitation();
+				app.setVisible(true);
+			} catch (DiskPermissionsException e) {
+				e.printStackTrace();
+				f.delete();
+				Dialogs.showDiskPermissionsErrorDialog(e);
+			} catch (ProgramFilesBrokenException e) {
+				e.printStackTrace();
+				f.delete();
+				Dialogs.showFilesBrokenErrorDialog(e);
+			} catch (ServerConnectionException e) {
+				e.printStackTrace();
+				f.delete();
+				Dialogs.showServerConnectionErrorDialog(e);
+			} catch (HddSerialScriptException e) {
+				e.printStackTrace();
+				f.delete();
+				Dialogs.showHddSerialErrorDialog(e);
+			} catch (KeyAlreadyRegisteredException e) {
+				e.printStackTrace();
+				f.delete();
+				Dialogs.showKeyRegisteredErrorDialog(e);
+			} catch (KeyNotExistException e) {
+				e.printStackTrace();
+				f.delete();
+				Dialogs.showKeyNotExistErrorDialog(e);
 			} catch (Exception e) {
 				e.printStackTrace();
 				f.delete();
-				JOptionPane.showConfirmDialog((java.awt.Component) null,
-						InterfaceTextDefaults.getInstance().getDefault("no_licence"),
-						InterfaceTextDefaults.getInstance().getDefault("licence_failed"),
-						javax.swing.JOptionPane.DEFAULT_OPTION);
-				e.printStackTrace();
+				Dialogs.showNoLicenseErrorDialog(e);
 			}
-
 		}
 	}
 }

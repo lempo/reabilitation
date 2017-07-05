@@ -62,6 +62,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableRowSorter;
 
+import jdatepicker.DatePicker;
+import jdatepicker.JDatePicker;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
@@ -86,8 +88,11 @@ import customuiandrender.TextCellRenderer;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import ori.jdatepicker.DatePicker;
-import ori.jdatepicker.JDatePicker;
+import dialogs.Dialogs;
+import exception.DiskPermissionsException;
+import exception.HddSerialScriptException;
+import exception.ProgramFilesBrokenException;
+import exception.ServerConnectionException;
 import tasks.AbstractTask;
 
 public class Reabilitation extends JFrame {
@@ -164,14 +169,44 @@ public class Reabilitation extends JFrame {
 
 	public Reabilitation() {
 		super("Reabilitation");
+		reabilitation = this;
+		
+		if (Utills.getCheckUpdatesAuto()) {
+			String location = null;
+			try {
+				location = HTTPClient.getVersion(Utills.getVersionDate());
+			} catch (ServerConnectionException e2) {
+				e2.printStackTrace();
+				Dialogs.showServerConnectionErrorDialog(e2);
+			} catch (ProgramFilesBrokenException e1) {
+				e1.printStackTrace();
+				Dialogs.showFilesBrokenErrorDialog(e1);
+			}
+			if (location != null) {
+				// update
+				// show dialog
+				CustomDialog d1 = new CustomDialog(reabilitation,
+						InterfaceTextDefaults.getInstance().getDefault("do_update"),
+						InterfaceTextDefaults.getInstance().getDefault("yes"),
+						InterfaceTextDefaults.getInstance().getDefault("no"), false);
+				if (d1.getAnswer() == 1) {
+					try {
+						Process proc = Runtime.getRuntime().exec("java -jar updater.jar " + location);
+						System.exit(0);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+				} else
+					return;
+			}
+		}
+		
 		setBounds(50, 50, width, height);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		// ������ ����������� ������ ���������
 		this.setUndecorated(true);
-
-		reabilitation = this;
 
 		InternalEventHandler internalEventHandler = new InternalEventHandler();
 		long eventMask = MouseEvent.MOUSE_PRESSED;
@@ -325,7 +360,13 @@ public class Reabilitation extends JFrame {
 		headerPanel.revalidate();
 		headerPanel.repaint();
 
-		String rows[][] = HTTPClient.listPatients();
+		String rows[][] = null;
+		try {
+			rows = HTTPClient.listPatients();
+		} catch (ServerConnectionException e) {
+			e.printStackTrace();
+			Dialogs.showServerConnectionErrorDialog(e);
+		}
 
 		UserTableModel model = new UserTableModel(rows);
 		JTable table = new JTable(model);
@@ -386,8 +427,13 @@ public class Reabilitation extends JFrame {
 				int row = table.rowAtPoint(evt.getPoint());
 				int col = table.columnAtPoint(evt.getPoint());
 				if (col == 4) {
-					HTTPClient.deletePatient((String) table.getModel().getValueAt(row, 2),
-							(String) table.getModel().getValueAt(row, 1));
+					try {
+						HTTPClient.deletePatient((String) table.getModel().getValueAt(row, 2),
+								(String) table.getModel().getValueAt(row, 1));
+					} catch (ServerConnectionException e) {
+						e.printStackTrace();
+						Dialogs.showServerConnectionErrorDialog(e);
+					}
 					showUsers();
 				}
 
@@ -495,10 +541,15 @@ public class Reabilitation extends JFrame {
 						InterfaceTextDefaults.getInstance().getDefault("enter2"),
 						InterfaceTextDefaults.getInstance().getDefault("cancel"));
 				if (d1.getAnswer() == 1) {
-					if (HTTPClient.loginSpec(d1.getLogin().trim(), d1.getPass().trim())) {
-						userName = d1.getLogin().trim();
-						userCardNumber = d1.getPass().trim();
-						start(true);
+					try {
+						if (HTTPClient.loginSpec(d1.getLogin().trim(), d1.getPass().trim())) {
+							userName = d1.getLogin().trim();
+							userCardNumber = d1.getPass().trim();
+							start(true);
+						}
+					} catch (ServerConnectionException e1) {
+						e1.printStackTrace();
+						Dialogs.showServerConnectionErrorDialog(e1);
 					}
 				}
 			}
@@ -513,17 +564,33 @@ public class Reabilitation extends JFrame {
 		start.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (neww.isSelected()) {
-					if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass()))
-						return;
-					HTTPClient.newPatient(login.getText().trim(), pass.getPass());
+					try {
+						if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass()))
+							return;
+					} catch (ServerConnectionException e1) {
+						e1.printStackTrace();
+						Dialogs.showServerConnectionErrorDialog(e1);
+					}
+					try {
+						HTTPClient.newPatient(login.getText().trim(), pass.getPass());
+					} catch (ServerConnectionException e1) {
+						e1.printStackTrace();
+						Dialogs.showServerConnectionErrorDialog(e1);
+					}
 					userName = login.getText().trim();
 					userCardNumber = pass.getPass();
 					start(false);
-				} else if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass())) {
-					userName = login.getText().trim();
-					userCardNumber = pass.getPass();
-					start(false);
-				}
+				} else
+					try {
+						if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass())) {
+							userName = login.getText().trim();
+							userCardNumber = pass.getPass();
+							start(false);
+						}
+					} catch (ServerConnectionException e1) {
+						e1.printStackTrace();
+						Dialogs.showServerConnectionErrorDialog(e1);
+					}
 			}
 		});
 
@@ -1156,17 +1223,66 @@ public class Reabilitation extends JFrame {
 		args = new Object[] {};
 
 		// read version
-		String v = Utills.getVersion();
-		String dd = Utills.getVersionDate();
+		String v = null;
+		try {
+			v = Utills.getVersion();
+		} catch (ProgramFilesBrokenException e4) {
+			e4.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e4);
+		}
+		String dd = null;
+		try {
+			dd = Utills.getVersionDate();
+		} catch (ProgramFilesBrokenException e4) {
+			e4.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e4);
+		}
 
 		// read config
-		String name = Utills.getLicenceUserName();
-		String keyNumber = Utills.getLicenceKey();
+		String name = null;
+		String keyNumber = null;
+		try {
+			name = Utills.getLicenceUserName();
+			keyNumber = Utills.getLicenceKey();
+		} catch (ProgramFilesBrokenException e3) {
+			e3.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e3);
+		}
 
 		// days left
-		int days = HTTPClient.daysLeft(keyNumber, name);
+		int days = 0;
+		try {
+			days = HTTPClient.daysLeft(keyNumber, name);
+		} catch (ServerConnectionException e2) {
+			e2.printStackTrace();
+			Dialogs.showServerConnectionErrorDialog(e2);
+		} catch (DiskPermissionsException e1) {
+			e1.printStackTrace();
+			Dialogs.showDiskPermissionsErrorDialog(e1);
+		} catch (ProgramFilesBrokenException e1) {
+			e1.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e1);
+		} catch (HddSerialScriptException e1) {
+			e1.printStackTrace();
+			Dialogs.showHddSerialErrorDialog(e1);
+		}
 
-		String from = HTTPClient.getFrom(keyNumber, name);
+		String from = null;
+		try {
+			from = HTTPClient.getFrom(keyNumber, name);
+		} catch (ServerConnectionException e2) {
+			e2.printStackTrace();
+			Dialogs.showServerConnectionErrorDialog(e2);
+		} catch (DiskPermissionsException e1) {
+			e1.printStackTrace();
+			Dialogs.showDiskPermissionsErrorDialog(e1);
+		} catch (ProgramFilesBrokenException e1) {
+			e1.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e1);
+		} catch (HddSerialScriptException e1) {
+			e1.printStackTrace();
+			Dialogs.showHddSerialErrorDialog(e1);
+		}
 
 		showedTask = null;
 		JLabel heading = new JLabel();
@@ -1238,7 +1354,16 @@ public class Reabilitation extends JFrame {
 		checkUpdates.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// ask DB for updates
-				String location = HTTPClient.getVersion(dd);
+				String location = null;
+				try {
+					location = HTTPClient.getVersion(Utills.getVersionDate());
+				} catch (ServerConnectionException e2) {
+					e2.printStackTrace();
+					Dialogs.showServerConnectionErrorDialog(e2);
+				} catch (ProgramFilesBrokenException e1) {
+					e1.printStackTrace();
+					Dialogs.showFilesBrokenErrorDialog(e1);
+				}
 				if (location != null) {
 					// update
 					// show dialog
@@ -1673,7 +1798,6 @@ public class Reabilitation extends JFrame {
 		p.add(interval, c1);
 
 		DatePicker date1 = new JDatePicker();
-		date1.setShowYearButtons(false);
 		if (filterDate1 != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(filterDate1);
@@ -1696,7 +1820,6 @@ public class Reabilitation extends JFrame {
 		p.add(def, c1);
 
 		DatePicker date2 = new JDatePicker();
-		date2.setShowYearButtons(false);
 		if (filterDate2 != null) {
 			Calendar cal = Calendar.getInstance();
 			cal.setTime(filterDate2);
@@ -1966,8 +2089,13 @@ public class Reabilitation extends JFrame {
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (!nameField.getText().trim().equals("") && !cardNumberField.getText().trim().equals("")) {
-					HTTPClient.editPatient(userOldName, userOldPass, nameField.getText().trim(),
-							cardNumberField.getText().trim());
+					try {
+						HTTPClient.editPatient(userOldName, userOldPass, nameField.getText().trim(),
+								cardNumberField.getText().trim());
+					} catch (ServerConnectionException e1) {
+						e1.printStackTrace();
+						Dialogs.showServerConnectionErrorDialog(e1);
+					}
 					showUsers();
 				}
 			}
@@ -2018,7 +2146,12 @@ public class Reabilitation extends JFrame {
 	}
 
 	public void showResults() {
-		resultsRows = HTTPClient.findResults(userName, userCardNumber);
+		try {
+			resultsRows = HTTPClient.findResults(userName, userCardNumber);
+		} catch (ServerConnectionException e) {
+			e.printStackTrace();
+			Dialogs.showServerConnectionErrorDialog(e);
+		}
 		ArrayList<String> a = new ArrayList<String>();
 		for (int i = 0; i < resultsRows.length; i++)
 			if (!a.contains(resultsRows[i][2]))

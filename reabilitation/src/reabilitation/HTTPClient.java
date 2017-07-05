@@ -1,16 +1,10 @@
 package reabilitation;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -18,10 +12,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import javax.swing.JOptionPane;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import exception.DiskPermissionsException;
+import exception.HddSerialScriptException;
+import exception.KeyAlreadyRegisteredException;
+import exception.KeyNotExistException;
+import exception.KeyNotRegisteredException;
+import exception.LisenceExpiredException;
+import exception.ProgramFilesBrokenException;
+import exception.ServerConnectionException;
 
 public class HTTPClient {
 
@@ -29,7 +30,7 @@ public class HTTPClient {
 	private static String SERVER = "https://komplimed.herokuapp.com";
 	// private final static String SERVER = "http://localhost:3000";
 
-	public static String makeRequest(String url) {
+	public static String makeRequest(String url) throws ServerConnectionException {
 		URL obj = null;
 		StringBuffer response = null;
 		try {
@@ -63,15 +64,13 @@ public class HTTPClient {
 
 		catch (IOException e) {
 			e.printStackTrace();
-			Object[] options = { "OK" };
-			JOptionPane.showOptionDialog(null, "Не удалось соединиться с сервером!", "Ошибка",
-					JOptionPane.PLAIN_MESSAGE, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			throw new ServerConnectionException(e);
 		}
 
 		return response.toString();
 	}
 
-	public static boolean loginSpec(String name, String pass) {
+	public static boolean loginSpec(String name, String pass) throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/loginspec.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
@@ -87,7 +86,7 @@ public class HTTPClient {
 			return false;
 	}
 
-	public static boolean loginPatient(String name, String pass) {
+	public static boolean loginPatient(String name, String pass) throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/loginpatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
@@ -103,7 +102,7 @@ public class HTTPClient {
 			return false;
 	}
 
-	public static String[][] listPatients() {
+	public static String[][] listPatients() throws ServerConnectionException {
 		String url = SERVER + "/api/listpatients.xml";
 		String response = makeRequest(url);
 
@@ -135,7 +134,7 @@ public class HTTPClient {
 		return r;
 	}
 
-	public static void newPatient(String name, String pass) {
+	public static void newPatient(String name, String pass) throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/newpatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
@@ -146,7 +145,7 @@ public class HTTPClient {
 		makeRequest(url);
 	}
 
-	public static void deletePatient(String name, String pass) {
+	public static void deletePatient(String name, String pass) throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/deletepatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
@@ -157,7 +156,8 @@ public class HTTPClient {
 		makeRequest(url);
 	}
 
-	public static void saveResult(String name, String pass, String taskName, int result, String taskGroup) {
+	public static void saveResult(String name, String pass, String taskName, int result, String taskGroup)
+			 throws ServerConnectionException {
 		String url = null;
 
 		// do we have such group?
@@ -206,7 +206,7 @@ public class HTTPClient {
 		makeRequest(url);
 	}
 
-	public static String[][] findResults(String name, String pass) {
+	public static String[][] findResults(String name, String pass)  throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/findresults.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
@@ -273,7 +273,7 @@ public class HTTPClient {
 		return r;
 	}
 
-	public static void editPatient(String name, String pass, String nameNew, String passNew) {
+	public static void editPatient(String name, String pass, String nameNew, String passNew) throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/editpatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
@@ -285,7 +285,9 @@ public class HTTPClient {
 		makeRequest(url);
 	}
 
-	public static boolean registerKey(String key, String userName) {
+	public static void registerKey(String key, String userName) throws 
+	DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException, 
+	ServerConnectionException, KeyNotExistException, KeyAlreadyRegisteredException {
 		String url = null;
 		String hddSerial = Utills.getHDDSerialNumber();
 		try {
@@ -296,12 +298,16 @@ public class HTTPClient {
 		}
 		String response = makeRequest(url);
 		if (response.equals("1"))
-			return true;
+			return;
+		else if (response.equals("2"))
+			throw new KeyAlreadyRegisteredException();
 		else
-			return false;
+			throw new KeyNotExistException();
 	}
 
-	public static boolean checkKey(String key, String userName) {
+	public static void checkKey(String key, String userName) throws 
+	DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException, 
+	ServerConnectionException, KeyNotRegisteredException, LisenceExpiredException {
 		String url = null;
 		String hddSerial = Utills.getHDDSerialNumber();
 		try {
@@ -313,12 +319,14 @@ public class HTTPClient {
 		String response = makeRequest(url);
 
 		if (response.equals("1"))
-			return true;
+			return;
+		else if (response.equals("3"))
+			throw new LisenceExpiredException();
 		else
-			return false;
+			throw new KeyNotRegisteredException();
 	}
 
-	public static int daysLeft(String key, String userName) {
+	public static int daysLeft(String key, String userName)  throws ServerConnectionException, DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException {
 		String url = null;
 		String hddSerial = Utills.getHDDSerialNumber();
 		try {
@@ -333,7 +341,7 @@ public class HTTPClient {
 		return Integer.parseInt(response);
 	}
 
-	public static String getFrom(String key, String userName) {
+	public static String getFrom(String key, String userName) throws ServerConnectionException, DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException {
 		String url = null;
 		String hddSerial = Utills.getHDDSerialNumber();
 		try {
@@ -356,7 +364,7 @@ public class HTTPClient {
 		return response;
 	}
 
-	public static String getVersion(String date) {
+	public static String getVersion(String date) throws ServerConnectionException {
 		String url = null;
 		try {
 			url = SERVER + "/api/getversion.xml?date=" + URLEncoder.encode(date, "UTF8");
