@@ -22,10 +22,11 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import dialogs.Dialogs;
+import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class Dictionary extends AbstractTask {
 	private static final long serialVersionUID = -3579652853460802289L;
@@ -63,6 +64,9 @@ public class Dictionary extends AbstractTask {
 		} catch (ServerConnectionException e) {
 			e.printStackTrace();
 			Dialogs.showServerConnectionErrorDialog(e);
+		} catch (ProgramFilesBrokenException e) {
+			e.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e);
 		}
 		showStandartResults();
 	}
@@ -138,7 +142,7 @@ public class Dictionary extends AbstractTask {
 
 			pause = true;
 
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
 			startIcon.setIcon(icon);
 			startIcon.updateUI();
@@ -158,7 +162,7 @@ public class Dictionary extends AbstractTask {
 
 			pause = false;
 
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
 			pauseIcon.setIcon(icon);
 			pauseIcon.updateUI();

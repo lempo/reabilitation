@@ -30,7 +30,7 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import reabilitation.Reabilitation;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public abstract class AbstractTask extends JPanel {
 
@@ -91,10 +91,7 @@ public abstract class AbstractTask extends JPanel {
 		back.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				pause();
-				CustomDialog d1 = new CustomDialog(reabilitation,
-						InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-						InterfaceTextDefaults.getInstance().getDefault("break"),
-						InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
+				CustomDialog d1 = new CustomDialog(reabilitation, "sure_break_task", "break", "cancel", true);
 				if (d1.getAnswer() == 1)
 					showInfo();
 				else
@@ -113,10 +110,7 @@ public abstract class AbstractTask extends JPanel {
 		forward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				pause();
-				CustomDialog d1 = new CustomDialog(reabilitation,
-						InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-						InterfaceTextDefaults.getInstance().getDefault("break"),
-						InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
+				CustomDialog d1 = new CustomDialog(reabilitation, "sure_break_task", "break", "cancel", true);
 				if (d1.getAnswer() == 1)
 					showResults();
 				else
@@ -131,19 +125,19 @@ public abstract class AbstractTask extends JPanel {
 		pauseIcon = new JLabel();
 		beginingIcon = new JLabel();
 
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
+		ImageIcon icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
 		startIcon.setIcon(icon);
 		startIcon.setName("start");
 		startIcon.addMouseListener(iconsListener);
 		startIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
+		icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
 		pauseIcon.setIcon(icon);
 		pauseIcon.setName("pause");
 		pauseIcon.addMouseListener(iconsListener);
 		pauseIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BEGINING));
+		icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BEGINING));
 		beginingIcon.setIcon(icon);
 		beginingIcon.setName("begining");
 		beginingIcon.addMouseListener(iconsListener);
@@ -256,14 +250,14 @@ public abstract class AbstractTask extends JPanel {
 		repeatIcon = new JLabel();
 		allResultsIcon = new JLabel();
 
-		ImageIcon icon = Utills
+		ImageIcon icon = Utils
 				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.REPEAT_TASK));
 		repeatIcon.setIcon(icon);
 		repeatIcon.setName("repeattask");
 		repeatIcon.addMouseListener(iconsListener);
 		repeatIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ALL_RESULTS));
+		icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ALL_RESULTS));
 		allResultsIcon.setIcon(icon);
 		allResultsIcon.setName("allresults");
 		allResultsIcon.addMouseListener(iconsListener);
@@ -340,7 +334,7 @@ public abstract class AbstractTask extends JPanel {
 				"<html><div style='font: 16pt Arial Narrow; color: rgb(115, 84, 73);'>" + getText() + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -523,10 +517,7 @@ public abstract class AbstractTask extends JPanel {
 				break;
 			case "begining":
 				pause();
-				CustomDialog d1 = new CustomDialog(reabilitation,
-						InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-						InterfaceTextDefaults.getInstance().getDefault("break"),
-						InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
+				CustomDialog d1 = new CustomDialog(reabilitation, "sure_break_task", "break", "cancel", true);
 				if (d1.getAnswer() == 1) {
 					// TODO
 					start();
@@ -554,33 +545,33 @@ public abstract class AbstractTask extends JPanel {
 			ImageIcon icon;
 			switch (l.getName()) {
 			case "start":
-				icon = Utills
+				icon = Utils
 						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START_ROLLOVER));
 				l.setIcon(icon);
 				l.updateUI();
 				break;
 			case "begining":
-				icon = Utills.createImageIcon(
+				icon = Utils.createImageIcon(
 						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BEGINING_ROLLOVER));
 				l.setIcon(icon);
 				l.updateUI();
 				break;
 			case "pause":
 				if (!pause) {
-					icon = Utills.createImageIcon(
+					icon = Utils.createImageIcon(
 							ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE_ROLLOVER));
 					l.setIcon(icon);
 					l.updateUI();
 				}
 				break;
 			case "repeattask":
-				icon = Utills.createImageIcon(
+				icon = Utils.createImageIcon(
 						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.REPEAT_TASK_ROLLOVER));
 				l.setIcon(icon);
 				l.updateUI();
 				break;
 			case "allresults":
-				icon = Utills.createImageIcon(
+				icon = Utils.createImageIcon(
 						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ALL_RESULTS_ROLLOVER));
 				l.setIcon(icon);
 				l.updateUI();
@@ -594,30 +585,30 @@ public abstract class AbstractTask extends JPanel {
 			ImageIcon icon;
 			switch (l.getName()) {
 			case "start":
-				icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
+				icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
 				l.setIcon(icon);
 				l.updateUI();
 				break;
 			case "begining":
-				icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BEGINING));
+				icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BEGINING));
 				l.setIcon(icon);
 				l.updateUI();
 				break;
 			case "pause":
 				if (!pause) {
-					icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
+					icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
 					l.setIcon(icon);
 					l.updateUI();
 				}
 				break;
 			case "repeattask":
-				icon = Utills
+				icon = Utils
 						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.REPEAT_TASK));
 				l.setIcon(icon);
 				l.updateUI();
 				break;
 			case "allresults":
-				icon = Utills
+				icon = Utils
 						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ALL_RESULTS));
 				l.setIcon(icon);
 				l.updateUI();

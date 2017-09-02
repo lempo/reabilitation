@@ -19,7 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class ComparisonPanel extends JPanel {
 
@@ -113,7 +113,7 @@ public class ComparisonPanel extends JPanel {
 		variants = new JLabel[9];
 		picNum = ones[counter];
 		one = new JLabel();
-		ImageIcon icon = Utills.createImageIcon(
+		ImageIcon icon = Utils.createImageIcon(
 				ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.COMPARISON) + Integer.toString(diff) + "/"
 						+ Integer.toString(dirNum) + "/" + Integer.toString(picNum) + ".png");
 		one.setIcon(icon);
@@ -121,7 +121,7 @@ public class ComparisonPanel extends JPanel {
 		GridLayout experimentLayout = new GridLayout(3, 3, 1, 1);
 		p.setLayout(experimentLayout);
 		for (int i = 0; i < 9; i++) {
-			icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.COMPARISON)
+			icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.COMPARISON)
 					+ Integer.toString(diff) + "/" + Integer.toString(dirNum) + "/" + Integer.toString(i) + ".png");
 			variants[i] = new JLabel();
 			variants[i].setIcon(icon);

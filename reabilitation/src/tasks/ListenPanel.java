@@ -33,7 +33,7 @@ import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
 import reabilitation.Sound;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class ListenPanel extends JPanel {
 
@@ -114,7 +114,7 @@ public class ListenPanel extends JPanel {
 			public void actionPerformed(ActionEvent ev) {
 				if (bar.getValue() < catchTime) {
 					bar.setValue(bar.getValue() + 1);
-					ImageIcon icon = Utills.createImageIcon(
+					ImageIcon icon = Utils.createImageIcon(
 							"resources/image/timer/" + Integer.toString(catchTime - bar.getValue()) + ".png");
 					left.setIcon(icon);
 				} else {
@@ -148,7 +148,7 @@ public class ListenPanel extends JPanel {
 		String[][] variants = new String[categoriesNum][];
 		int[][] usage = new int[categoriesNum][];
 
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.LISTEN));
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.LISTEN));
 		NodeList n = doc.getElementsByTagName("category");
 
 		int[] u = new int[n.getLength()];
@@ -196,7 +196,7 @@ public class ListenPanel extends JPanel {
 		categoryLabels = new JLabel[categoriesNum];
 		for (int k = 0; k < categoriesNum; k++) {
 			categoryLabels[k] = new JLabel();
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.LISTEN)
 							+ Integer.toString(diff) + "/" + categories[k]);
 			categoryLabels[k].setIcon(icon);
@@ -254,7 +254,7 @@ public class ListenPanel extends JPanel {
 		progressBar.setBorder(null);
 		bar = progressBar;
 
-		ImageIcon icon = Utills
+		ImageIcon icon = Utils
 				.createImageIcon("resources/image/timer/" + Integer.toString(catchTime - bar.getValue()) + ".png");
 		left.setIcon(icon);
 
@@ -305,7 +305,7 @@ public class ListenPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("listen_info") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -365,7 +365,7 @@ public class ListenPanel extends JPanel {
 		} else {
 			n++;
 			bar.setValue(0);
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon("resources/image/timer/" + Integer.toString(catchTime - bar.getValue()) + ".png");
 			left.setIcon(icon);
 			timer.start();

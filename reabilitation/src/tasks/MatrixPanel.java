@@ -39,7 +39,7 @@ import customuiandrender.ProgressBarCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class MatrixPanel extends JPanel {
 	private static final long serialVersionUID = 2810359745297138538L;
@@ -259,7 +259,7 @@ public class MatrixPanel extends JPanel {
 				labels[k].setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, borderColor));
 			if (k == pos[i]) {
 				labels[k].setIcon(
-						Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
+						Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
 								+ Integer.toString(diff) + "/" + pictures[i]));
 				selectedControl[k] = 1;
 				allPictures[d] = pictures[i];
@@ -350,7 +350,7 @@ public class MatrixPanel extends JPanel {
 			bar = progressBar;
 
 			left = new JLabel();
-			ImageIcon icon = Utills.createImageIcon(
+			ImageIcon icon = Utils.createImageIcon(
 					"resources/image/timer/" + Integer.toString(rememberTime - bar.getValue()) + ".png");
 			left.setIcon(icon);
 
@@ -390,7 +390,7 @@ public class MatrixPanel extends JPanel {
 					if (barType == 0) {
 						if (bar.getValue() < rememberTime) {
 							bar.setValue(bar.getValue() + 1);
-							ImageIcon icon = Utills.createImageIcon("resources/image/timer/"
+							ImageIcon icon = Utils.createImageIcon("resources/image/timer/"
 									+ Integer.toString(rememberTime - bar.getValue()) + ".png");
 							left.setIcon(icon);
 						} else {
@@ -401,7 +401,7 @@ public class MatrixPanel extends JPanel {
 					if (barType == 1) {
 						if (bar.getValue() < remindTime) {
 							bar.setValue(bar.getValue() + 1);
-							ImageIcon icon = Utills.createImageIcon(
+							ImageIcon icon = Utils.createImageIcon(
 									"resources/image/timer/" + Integer.toString(remindTime - bar.getValue()) + ".png");
 							left.setIcon(icon);
 						} else {
@@ -431,7 +431,7 @@ public class MatrixPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("matrix_info_1") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -497,7 +497,7 @@ public class MatrixPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("matrix_info_2") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("continue"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -557,7 +557,7 @@ public class MatrixPanel extends JPanel {
 		else {
 			JLabel picture = labels[showPicturesCounter];
 
-			picture.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
+			picture.setIcon(Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
 					+ Integer.toString(diff) + "/" + allPictures[showPicturesCounter]));
 			picture.setBorder(null);
 
@@ -672,7 +672,7 @@ public class MatrixPanel extends JPanel {
 				bar = progressBar;
 
 				left = new JLabel();
-				ImageIcon icon = Utills.createImageIcon(
+				ImageIcon icon = Utils.createImageIcon(
 						"resources/image/timer/" + Integer.toString(remindTime - bar.getValue()) + ".png");
 				left.setIcon(icon);
 
@@ -721,7 +721,7 @@ public class MatrixPanel extends JPanel {
 			showCellsSelection();
 		else {
 			showPicturesCounter++;
-			picture.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
+			picture.setIcon(Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
 					+ Integer.toString(diff) + "/" + allPictures[showPicturesCounter]));
 			picture.setBorder(null);
 
@@ -731,7 +731,7 @@ public class MatrixPanel extends JPanel {
 			if (diff != Matrix.EASY) {
 				bar.setValue(0);
 				nextPictureForTimer = picture;
-				ImageIcon icon = Utills.createImageIcon(
+				ImageIcon icon = Utils.createImageIcon(
 						"resources/image/timer/" + Integer.toString(remindTime - bar.getValue()) + ".png");
 				left.setIcon(icon);
 				timer.start();
@@ -894,7 +894,7 @@ public class MatrixPanel extends JPanel {
 		for (int i = 0; i < picturesNum + additionalPicturesNum; i++) {
 			if (remembered[i] == 1) {
 				JLabel l = new JLabel();
-				l.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
+				l.setIcon(Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MATRIX)
 						+ Integer.toString(diff) + "/" + allPictures[i]));
 				l.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 

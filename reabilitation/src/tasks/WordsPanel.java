@@ -42,7 +42,7 @@ import customuiandrender.ProgressBarCustomUI;
 import customuiandrender.ScrollBarCustomUI;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class WordsPanel extends JPanel {
 	private static final long serialVersionUID = 2810359745297138538L;
@@ -154,7 +154,7 @@ public class WordsPanel extends JPanel {
 		variants = new String[categoriesNum][];
 		usage = new int[categoriesNum][];
 
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.WORDS));
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.WORDS));
 
 		NodeList n = doc.getElementsByTagName("category");
 
@@ -340,7 +340,7 @@ public class WordsPanel extends JPanel {
 			bar = progressBar;
 
 			left = new JLabel();
-			ImageIcon icon = Utills.createImageIcon(
+			ImageIcon icon = Utils.createImageIcon(
 					"resources/image/timer/" + Integer.toString(rememberTime - bar.getValue()) + ".png");
 			left.setIcon(icon);
 
@@ -380,7 +380,7 @@ public class WordsPanel extends JPanel {
 					if (barType == 0) {
 						if (bar.getValue() < rememberTime) {
 							bar.setValue(bar.getValue() + 1);
-							ImageIcon icon = Utills.createImageIcon("resources/image/timer/"
+							ImageIcon icon = Utils.createImageIcon("resources/image/timer/"
 									+ Integer.toString(rememberTime - bar.getValue()) + ".png");
 							left.setIcon(icon);
 						} else {
@@ -391,7 +391,7 @@ public class WordsPanel extends JPanel {
 					if (barType == 1) {
 						if (bar.getValue() < remindTime) {
 							bar.setValue(bar.getValue() + 1);
-							ImageIcon icon = Utills.createImageIcon(
+							ImageIcon icon = Utils.createImageIcon(
 									"resources/image/timer/" + Integer.toString(remindTime - bar.getValue()) + ".png");
 							left.setIcon(icon);
 						} else {
@@ -421,7 +421,7 @@ public class WordsPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("words_info_1") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -487,7 +487,7 @@ public class WordsPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("words_info_2") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("continue"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -659,7 +659,7 @@ public class WordsPanel extends JPanel {
 				bar = progressBar;
 
 				left = new JLabel();
-				ImageIcon icon = Utills.createImageIcon(
+				ImageIcon icon = Utils.createImageIcon(
 						"resources/image/timer/" + Integer.toString(remindTime - bar.getValue()) + ".png");
 				left.setIcon(icon);
 
@@ -719,7 +719,7 @@ public class WordsPanel extends JPanel {
 			if (diff != Words.EASY) {
 				bar.setValue(0);
 				nextWordForTimer = word;
-				ImageIcon icon = Utills.createImageIcon(
+				ImageIcon icon = Utils.createImageIcon(
 						"resources/image/timer/" + Integer.toString(remindTime - bar.getValue()) + ".png");
 				left.setIcon(icon);
 				timer.start();

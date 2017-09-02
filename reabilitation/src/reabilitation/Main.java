@@ -25,20 +25,20 @@ public class Main {
 	public static void main(String[] args) {
 
 		try {
-			HTTPClient.setSERVER(Utills.getAppServer());
+			HTTPClient.setSERVER(Utils.getAppServer());
 		} catch (ProgramFilesBrokenException e1) {
 			e1.printStackTrace();
 			Dialogs.showFilesBrokenErrorDialog(e1);
 			return;
 		}
-		File f = new File(Utills.getFilePath() + "/config");
+		File f = new File(Utils.getFilePath() + "/config");
 		
 		// that means already registered because config exists
 		if (f.exists()) {
 			// check key
 			try {
-				String key = Utills.getLicenceKey();
-				String username = Utills.getLicenceUserName();
+				String key = Utils.getLicenceKey();
+				String username = Utils.getLicenceUserName();
 				HTTPClient.checkKey(key, username);
 				JFrame app = new Reabilitation();
 				app.setVisible(true);
@@ -66,21 +66,33 @@ public class Main {
 		// not registered yet
 		else {
 			// licence dialog
+			UIManager.put("OptionPane.cancelButtonText", InterfaceTextDefaults.getInstance().getDefault("cancel"));
+			UIManager.put("OptionPane.okButtonText", InterfaceTextDefaults.getInstance().getDefault("ok"));
 			JTextField name = new JTextField();
 			JTextField key = new JTextField();
+			JTextField login = new JTextField();
+			JTextField pass = new JTextField();
 			final JComponent[] inputs = new JComponent[] {
 					new JLabel(InterfaceTextDefaults.getInstance().getDefault("name_surname_patronymic") + ":"), name,
-					new JLabel(InterfaceTextDefaults.getInstance().getDefault("key") + ":"), key };
+					new JLabel(InterfaceTextDefaults.getInstance().getDefault("key") + ":"), key,
+					new JLabel(InterfaceTextDefaults.getInstance().getDefault("create_login") + ":"), login,
+					new JLabel(InterfaceTextDefaults.getInstance().getDefault("create_pass") + ":"), pass };
 			int reply = JOptionPane.showConfirmDialog(null, inputs,
 					InterfaceTextDefaults.getInstance().getDefault("enter_licence_data"), JOptionPane.OK_CANCEL_OPTION,
 					JOptionPane.PLAIN_MESSAGE);
 			if (reply != JOptionPane.OK_OPTION)
 				return;
+			
+			if (name.getText().trim().equals("") || key.getText().trim().equals("") || login.getText().trim().equals("")
+					|| pass.getText().trim().equals("")) {
+				Dialogs.showFillAllFieldsDialog();
+				return;
+			}
 
 			// create file
 			try {
-				Utills.createConfigFile(f, name.getText().trim(), key.getText().trim());
-				HTTPClient.registerKey(key.getText().trim(), name.getText().trim());
+				Utils.createConfigFile(f, name.getText().trim(), key.getText().trim());
+				HTTPClient.registerKey(key.getText().trim(), name.getText().trim(), login.getText().trim(), pass.getText().trim());
 				JFrame app = new Reabilitation();
 				app.setVisible(true);
 			} catch (DiskPermissionsException e) {

@@ -1,9 +1,6 @@
 package customcomponent;
 
-import javax.swing.JDialog;
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dialog;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -12,18 +9,18 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.InputMap;
-import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
 
-import customuiandrender.ButtonCustomUI;
 import customuiandrender.PanelCustomUI;
 import defaults.InterfaceTextDefaults;
 
@@ -33,8 +30,9 @@ public class CustomDialog extends JDialog {
 	CustomTextField pass;
 	CustomTextField login;
 
-	public CustomDialog(JFrame parent, String title, String y, String n) {
-		super(parent, title);
+	public CustomDialog(JFrame parent, String titleTextDefault, String textDefaultYes, String textDefaultNo) {
+		super(parent, InterfaceTextDefaults.getInstance().getDefault(titleTextDefault));
+		titleTextDefault = InterfaceTextDefaults.getInstance().getDefault(titleTextDefault);
 
 		setUndecorated(true);
 		setPreferredSize(new Dimension(350, 200));
@@ -66,7 +64,7 @@ public class CustomDialog extends JDialog {
 		c.weighty = 1.0;
 
 		messagePane.add(new JLabel("<html><div style='font: bold 16pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ title.toUpperCase().replaceAll(" ", "<br/>") + "</div></html>"), c);
+				+ titleTextDefault.toUpperCase().replaceAll(" ", "<br/>") + "</div></html>"), c);
 
 		pass = new CustomTextField(20, InterfaceTextDefaults.getInstance().getDefault("password"));
 		login = new CustomTextField(20, InterfaceTextDefaults.getInstance().getDefault("name_surname_patronymic"));
@@ -76,13 +74,7 @@ public class CustomDialog extends JDialog {
 		c.gridy = 2;
 		messagePane.add(pass, c);
 
-		JButton yes = new JButton(y);
-		yes.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-		yes.setBorder(null);
-		yes.setOpaque(false);
-		yes.setPreferredSize(new Dimension(85, 35));
-		yes.setMinimumSize(new Dimension(85, 35));
-		yes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton yes = new CustomButton(textDefaultYes, new Color(38, 166, 154), 85, 35);
 		yes.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				answer = 1;
@@ -90,13 +82,7 @@ public class CustomDialog extends JDialog {
 				dispose();
 			}
 		});
-		JButton no = new JButton(n);
-		no.setUI(new ButtonCustomUI(new Color(239, 83, 80)));
-		no.setBorder(null);
-		no.setOpaque(false);
-		no.setPreferredSize(new Dimension(85, 35));
-		no.setMinimumSize(new Dimension(85, 35));
-		no.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton no = new CustomButton(textDefaultNo, new Color(239, 83, 80), 85, 35);
 		no.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				answer = 0;
@@ -140,8 +126,9 @@ public class CustomDialog extends JDialog {
 		setVisible(true);
 	}
 
-	public CustomDialog(JFrame parent, String title, String y, String n, boolean shad) {
-		super(parent, title);
+	public CustomDialog(JFrame parent, String titleTextDefault, String textDefaultYes, String textDefaultNo, boolean shad) {
+		super(parent, InterfaceTextDefaults.getInstance().getDefault(titleTextDefault));
+		titleTextDefault = InterfaceTextDefaults.getInstance().getDefault(titleTextDefault);
 
 		setUndecorated(true);
 		setPreferredSize(new Dimension(310, 160));
@@ -173,27 +160,20 @@ public class CustomDialog extends JDialog {
 		c.weighty = 1.0;
 
 		messagePane.add(new JLabel("<html><div style='font: bold 16pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ title.toUpperCase().replaceAll(" ", "<br/>") + "</div></html>"), c);
+				+ titleTextDefault.toUpperCase().replaceAll(" ", "<br/>") + "</div></html>"), c);
 
 		// Create a button
-
-		if ((y == null) || (n == null)) {
+		if ((textDefaultYes == null) || (textDefaultNo == null)) {
 
 			String v = "";
-			if (y != null)
-				v = y;
+			if (textDefaultYes != null)
+				v = textDefaultYes;
 			else {
-				if (n != null)
-					v = n;
+				if (textDefaultNo != null)
+					v = textDefaultNo;
 			}
 
-			JButton yes = new JButton(v);
-			yes.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-			yes.setBorder(null);
-			yes.setOpaque(false);
-			yes.setPreferredSize(new Dimension(85, 35));
-			yes.setMinimumSize(new Dimension(85, 35));
-			yes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			CustomButton yes = new CustomButton(v, new Color(38, 166, 154), 85, 35);
 			yes.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					answer = 1;
@@ -216,13 +196,7 @@ public class CustomDialog extends JDialog {
 
 			messagePane.add(yes, c);
 		} else {
-			JButton yes = new JButton(y);
-			yes.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-			yes.setBorder(null);
-			yes.setOpaque(false);
-			yes.setPreferredSize(new Dimension(85, 35));
-			yes.setMinimumSize(new Dimension(85, 35));
-			yes.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			CustomButton yes = new CustomButton(textDefaultYes, new Color(38, 166, 154), 85, 35);
 			yes.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					answer = 1;
@@ -230,13 +204,7 @@ public class CustomDialog extends JDialog {
 					dispose();
 				}
 			});
-			JButton no = new JButton(n);
-			no.setUI(new ButtonCustomUI(new Color(239, 83, 80)));
-			no.setBorder(null);
-			no.setOpaque(false);
-			no.setPreferredSize(new Dimension(85, 35));
-			no.setMinimumSize(new Dimension(85, 35));
-			no.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			CustomButton no = new CustomButton(textDefaultNo, new Color(239, 83, 80), 85, 35);
 			no.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					answer = 0;

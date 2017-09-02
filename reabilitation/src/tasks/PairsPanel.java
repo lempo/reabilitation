@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class PairsPanel extends JPanel {
 
@@ -59,7 +59,7 @@ public class PairsPanel extends JPanel {
 		startPauseTime = 0;
 		correct = 0;
 		attempts = 0;
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
+		ImageIcon icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
 				+ Integer.toString(diff) + "/" + "empty.png");
 		for (int i = 0; i < diff * diff; i++) {
 			cardsF[i] = 0;
@@ -78,7 +78,7 @@ public class PairsPanel extends JPanel {
 		}
 		cards = new JLabel[diff * diff];
 		cardsF = new int[diff * diff];
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
+		ImageIcon icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
 				+ Integer.toString(diff) + "/" + "empty.png");
 		CardsMouseListener l = new CardsMouseListener();
 		int i = 0;
@@ -121,7 +121,7 @@ public class PairsPanel extends JPanel {
 
 			if (cardsF[i] == 0) {
 
-				icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
+				icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
 						+ Integer.toString(diff) + "/" + parts[1] + ".png");
 
 				int f = -1;
@@ -156,7 +156,7 @@ public class PairsPanel extends JPanel {
 					}
 				} else {
 					cardsF[i] = 1;
-					icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
+					icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
 							+ Integer.toString(diff) + "/" + parts[1] + ".png");
 					l.setIcon(icon);
 					l.updateUI();
@@ -207,7 +207,7 @@ public class PairsPanel extends JPanel {
 
 		@Override
 		public void run() {
-			ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
+			ImageIcon icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAIRS)
 					+ Integer.toString(diff) + "/" + "empty.png");
 
 			String[] parts = opened1.getName().split(" ");

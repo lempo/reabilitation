@@ -12,7 +12,7 @@ import javax.swing.RowSorter;
 import javax.swing.table.TableCellRenderer;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class TableHeaderRenderer extends JLabel implements TableCellRenderer {
 
@@ -48,22 +48,22 @@ public class TableHeaderRenderer extends JLabel implements TableCellRenderer {
 		setOpaque(true);
 		setBackground(new Color(161, 136, 127));
 		setText("<html><div style='font: 16pt Arial Narrow; color: white; padding: 5px;'>" + s + "</div></html>");
-		setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HEADER_ARROW)));
+		setIcon(Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HEADER_ARROW)));
 
 		ImageIcon sortIcon = null;
 		java.util.List<? extends RowSorter.SortKey> sortKeys = table.getRowSorter().getSortKeys();
 		if (sortKeys.size() > 0 && sortKeys.get(0).getColumn() == table.convertColumnIndexToModel(column)) {
 			switch (sortKeys.get(0).getSortOrder()) {
 			case ASCENDING:
-				sortIcon = Utills.createImageIcon(
+				sortIcon = Utils.createImageIcon(
 						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HEADER_ARROW_SORT));
 				break;
 			case DESCENDING:
-				sortIcon = Utills.createImageIcon(
+				sortIcon = Utils.createImageIcon(
 						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HEADER_ARROW_SORT));
 				break;
 			case UNSORTED:
-				sortIcon = Utills
+				sortIcon = Utils
 						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HEADER_ARROW));
 				break;
 			}

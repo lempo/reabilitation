@@ -33,7 +33,7 @@ import customuiandrender.ButtonCustomUI;
 import customuiandrender.ProgressBarCustomUI;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class DictionaryPanel extends JPanel {
 
@@ -114,12 +114,12 @@ public class DictionaryPanel extends JPanel {
 				if (bar.getValue() < taskTime) {
 					bar.setValue(bar.getValue() + 1);
 					if (diff == Dictionary.HARD) {
-						ImageIcon icon = Utills.createImageIcon(
+						ImageIcon icon = Utils.createImageIcon(
 								"resources/image/timer/" + Integer.toString(taskTime - bar.getValue()) + ".png");
 						left.setIcon(icon);
 					}
 					if (diff == Dictionary.MIDDLE) {
-						ImageIcon icon = Utills.createImageIcon("resources/image/timer/"
+						ImageIcon icon = Utils.createImageIcon("resources/image/timer/"
 								+ Integer.toString((taskTime - bar.getValue()) / 60 + 1) + "m.png");
 						left.setIcon(icon);
 					}
@@ -153,7 +153,7 @@ public class DictionaryPanel extends JPanel {
 		rand = new Random(System.nanoTime());
 		words = new String[wordsNum][syllableNum];
 
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.DICTIONARY)
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.DICTIONARY)
 				+ Integer.toString(syllableNum) + "/words.xml");
 		NodeList n = doc.getElementsByTagName("category");
 		Node cat = null;
@@ -201,7 +201,7 @@ public class DictionaryPanel extends JPanel {
 
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -274,7 +274,7 @@ public class DictionaryPanel extends JPanel {
 
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -291,7 +291,7 @@ public class DictionaryPanel extends JPanel {
 			}
 		});
 
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.DICTIONARY)
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.DICTIONARY)
 				+ Integer.toString(syllableNum) + "/words.xml");
 		NodeList n = doc.getElementsByTagName("category");
 		JRadioButton[] radio = new JRadioButton[n.getLength()];
@@ -655,12 +655,12 @@ public class DictionaryPanel extends JPanel {
 			bar = progressBar;
 
 			if (diff == Dictionary.HARD) {
-				ImageIcon icon = Utills.createImageIcon(
+				ImageIcon icon = Utils.createImageIcon(
 						"resources/image/timer/" + Integer.toString(taskTime - bar.getValue()) + ".png");
 				left.setIcon(icon);
 			}
 			if (diff == Dictionary.MIDDLE) {
-				ImageIcon icon = Utills.createImageIcon(
+				ImageIcon icon = Utils.createImageIcon(
 						"resources/image/timer/" + Integer.toString((taskTime - bar.getValue()) / 60) + "m.png");
 				left.setIcon(icon);
 			}

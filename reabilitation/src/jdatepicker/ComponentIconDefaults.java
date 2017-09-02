@@ -29,7 +29,7 @@ package jdatepicker;
 
 import jdatepicker.graphics.JNextIcon;
 import jdatepicker.graphics.JPreviousIcon;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -66,16 +66,16 @@ public final class ComponentIconDefaults {
     private Icon popupButtonIcon;
 
     private ComponentIconDefaults() {
-        clearIcon = Utills.createImageIcon(CLEAR);
-		nextMonthIconEnabled = Utills.createImageIcon("/jdatepicker/resources/icons/increase_horizontal.png");
+        clearIcon = Utils.createImageIcon(CLEAR);
+		nextMonthIconEnabled = Utils.createImageIcon("/jdatepicker/resources/icons/increase_horizontal.png");
 		nextYearIconEnabled = new JNextIcon(8, 7, true, true);
-		previousMonthIconEnabled = Utills.createImageIcon("/jdatepicker/resources/icons/decrease_horizontal.png");
+		previousMonthIconEnabled = Utils.createImageIcon("/jdatepicker/resources/icons/decrease_horizontal.png");
 		previousYearIconEnabled = new JPreviousIcon(8, 7, true, true);
 		nextMonthIconDisabled = nextMonthIconEnabled;
 		nextYearIconDisabled = new JNextIcon(8, 7, true, false);
 		previousMonthIconDisabled = previousMonthIconEnabled;
 		previousYearIconDisabled = new JPreviousIcon(8, 7, true, false);
-		popupButtonIcon = Utills.createImageIcon("/jdatepicker/resources/icons/popup_button.png");
+		popupButtonIcon = Utils.createImageIcon("/jdatepicker/resources/icons/popup_button.png");
     }
 
     public Icon getClearIcon() {

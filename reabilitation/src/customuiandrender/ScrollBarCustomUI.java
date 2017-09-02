@@ -12,7 +12,7 @@ import javax.swing.JScrollBar;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class ScrollBarCustomUI extends BasicScrollBarUI {
 
@@ -32,9 +32,9 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
 		btnL.setContentAreaFilled(false);
 		if (scrollbar.getOrientation() == JScrollBar.VERTICAL)
 			btnL.setIcon(
-					Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.INCREASE)));
+					Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.INCREASE)));
 		else
-			btnL.setIcon(Utills.createImageIcon(
+			btnL.setIcon(Utils.createImageIcon(
 					ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.DECREASE_HORIZONTAL)));
 		return btnL;
 	}
@@ -47,9 +47,9 @@ public class ScrollBarCustomUI extends BasicScrollBarUI {
 		btnL.setContentAreaFilled(false);
 		if (scrollbar.getOrientation() == JScrollBar.VERTICAL)
 			btnL.setIcon(
-					Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.DECREASE)));
+					Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.DECREASE)));
 		else
-			btnL.setIcon(Utills.createImageIcon(
+			btnL.setIcon(Utils.createImageIcon(
 					ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.INCREASE_HORIZONTAL)));
 		return btnL;
 	}

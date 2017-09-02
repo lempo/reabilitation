@@ -41,7 +41,7 @@ import customuiandrender.ButtonCustomUI;
 import customuiandrender.ProgressBarCustomUI;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class CategoriesPanel extends JPanel {
 
@@ -118,7 +118,7 @@ public class CategoriesPanel extends JPanel {
 			public void actionPerformed(ActionEvent ev) {
 				if (bar.getValue() < catchTime) {
 					bar.setValue(bar.getValue() + 1);
-					ImageIcon icon = Utills.createImageIcon(
+					ImageIcon icon = Utils.createImageIcon(
 							"resources/image/timer/" + Integer.toString(catchTime - bar.getValue()) + ".png");
 					left.setIcon(icon);
 				} else {
@@ -153,7 +153,7 @@ public class CategoriesPanel extends JPanel {
 		String[][] variants = new String[categoriesNum][];
 		int[][] usage = new int[categoriesNum][];
 
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.CATEGORIES));
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.CATEGORIES));
 		NodeList n = doc.getElementsByTagName("category");
 
 		int[] u = new int[n.getLength()];
@@ -263,7 +263,7 @@ public class CategoriesPanel extends JPanel {
 		progressBar.setBorder(null);
 		bar = progressBar;
 
-		ImageIcon icon = Utills
+		ImageIcon icon = Utils
 				.createImageIcon("resources/image/timer/" + Integer.toString(catchTime - bar.getValue()) + ".png");
 		left.setIcon(icon);
 
@@ -314,7 +314,7 @@ public class CategoriesPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("categories_info") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -376,7 +376,7 @@ public class CategoriesPanel extends JPanel {
 				this.remove(currentWord);
 			n++;
 			bar.setValue(0);
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon("resources/image/timer/" + Integer.toString(catchTime - bar.getValue()) + ".png");
 			left.setIcon(icon);
 			timer.start();

@@ -1,21 +1,18 @@
 package customcomponent;
 
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Popup;
 
 import defaults.ImageLinkDefaults;
-import defaults.InterfaceTextDefaults;
 import reabilitation.Reabilitation;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = 1988458431909302046L;
@@ -45,14 +42,14 @@ public class MenuPanel extends JPanel {
 		for (int i = 1; i < 11; i++) {
 			labels[i - 1] = new JLabel();
 			labels[i - 1].setName(Integer.toString(i));
-			labels[i - 1].setIcon(Utills
+			labels[i - 1].setIcon(Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MENU) + i + ".png"));
 			labels[i - 1].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			labels[i - 1].addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseEntered(MouseEvent e) {
 					JLabel l = (JLabel) e.getSource();
-					l.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MENU)
+					l.setIcon(Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MENU)
 							+ l.getName() + "_rollover.png"));
 					l.updateUI();
 				}
@@ -60,7 +57,7 @@ public class MenuPanel extends JPanel {
 				@Override
 				public void mouseExited(MouseEvent e) {
 					JLabel l = (JLabel) e.getSource();
-					l.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MENU)
+					l.setIcon(Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MENU)
 							+ l.getName() + ".png"));
 					l.updateUI();
 				}
@@ -70,10 +67,7 @@ public class MenuPanel extends JPanel {
 					JLabel l = (JLabel) e.getSource();
 					if (r.showedTask != null  && !r.showedTask.isDontShowBreakingDialog()) {
 						r.showedTask.pause();
-						CustomDialog d1 = new CustomDialog(r,
-								InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-								InterfaceTextDefaults.getInstance().getDefault("break"),
-								InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
+						CustomDialog d1 = new CustomDialog(r, "sure_break_task", "break", "cancel", true);
 						if (d1.getAnswer() == 1)
 							r.showTasks(Integer.parseInt(l.getName()) - 1);
 						else if (r.showedTask != null)

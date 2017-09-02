@@ -1,6 +1,5 @@
 package reabilitation;
 
-import java.awt.AWTEvent;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
@@ -12,7 +11,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -20,8 +18,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -32,29 +28,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.Popup;
-import javax.swing.PopupFactory;
 import javax.swing.RowSorter;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
@@ -64,18 +55,27 @@ import javax.swing.table.TableRowSorter;
 
 import jdatepicker.DatePicker;
 import jdatepicker.JDatePicker;
+import listeners.GroupsMouseListener;
+import listeners.MenuMouseListener;
+import listeners.SmallMenuMouseListener;
+import listeners.TasksMouseListener;
+import listeners.TasksPopupMenuHandler;
+import listeners.WindowButtonsMouseListener;
+import listeners.WindowDraggingListener;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 
+import customcomponent.CustomButton;
 import customcomponent.CustomDialog;
-import customcomponent.CustomLabel;
+import customcomponent.TooltipLabel;
 import customcomponent.CustomPanel;
 import customcomponent.CustomPasswordField;
 import customcomponent.CustomTextField;
+import customcomponent.CustomLabel;
 import customcomponent.MenuPanel;
 import customcomponent.ResultsPanel;
-import customuiandrender.ButtonCustomUI;
 import customuiandrender.ComboBoxCustomUI;
 import customuiandrender.ComboBoxRenderer;
 import customuiandrender.DateCellRenderer;
@@ -95,86 +95,103 @@ import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import tasks.AbstractTask;
 
+////////////////////////////////////////
+// !!!!!!!!!!!!!!!!! Note that this class has A LOT OF public fields
+////////////////////////////////////////
 public class Reabilitation extends JFrame {
 
 	private static final long serialVersionUID = 2193812198591285704L;
 
-	private String userName = "";
-	private String userCardNumber = "";
+	////////////////////////////////////////
+	// APP INSTANSE
+	////////////////////////////////////////
+	public static Reabilitation reabilitation;
 
-	private Reabilitation reabilitation;
-	public AbstractTask showedTask = null;
+	////////////////////////////////////////
+	// ABOUT THE WINDOW
+	////////////////////////////////////////
+	private static int WINDOW_WIDTH = 1020;
+	public static int WINDOW_HEIGHT = 790;
+	private static boolean resized = false;
+	public static Point lastDragPosition;
+	private static int logoSpace = 289;
+	private static int iconsSpace = 10;
 
-	private int width = 1020;
-	private int height = 790;
+	////////////////////////////////////////
+	// UI EVENTS
+	////////////////////////////////////////
+	private static MouseListener draggingMouseListener;
+	private static WindowDraggingListener draggingMouseMotionListener;
 
-	// main panel
-	BgPanel panel;
+	////////////////////////////////////////
+	// UI ELEMENTS
+	////////////////////////////////////////
+	/** Main panel */
+	private static BackgroundPanel panel;
+	/** Panel with program menu */
+	private static CustomPanel menuPanel;
+	/** Panel with current content */
+	public static JPanel actualPanel;
+	/** Panel with header and small menu */
+	private static JPanel headerPanel;
+	/** Panel with window buttons */
+	private static JPanel windowPanel;
+	/** Menu icons */
+	private static CustomLabel exitIcon;
+	private static CustomLabel aboutIcon;
+//	private static CustomLabel helpIcon;
+	public static CustomLabel tasksIcon;
+	private static CustomLabel usersIcon;
+	private static CustomLabel smallMenuAboutIcon;
+	private static CustomLabel smallMenuBeginingIcon;
+	private static CustomLabel smallMenuEndIcon;
+	private static CustomLabel smallMenuResultsIcon;
+	private static CustomLabel closeIcon;
+	private static CustomLabel restoreIcon;
+	private static CustomLabel hideIcon;
+	/** Tasks popup menu */
+	public static Popup popup = null;
+	public static MenuPanel popupMenuPanel;
 
-	// panel with program menu
-	CustomPanel menuPanel;
+	////////////////////////////////////////
+	// GROUPS AND TASKS
+	////////////////////////////////////////
+	public static TaskGroup[] taskGroups;
+	public static Task[] tasks;
+	public static int currentTaskGroup = 0;
+	public static int currentTask = 0;
+	public static AbstractTask showedTask = null;
 
-	// panel with current content
-	JPanel actualPanel;
-
-	// panel with header and small menu
-	JPanel headerPanel;
-
-	// panel with window buttons
-	JPanel windowPanel;
-
-	// menu icons
-	JLabel exitIcon;
-	JLabel aboutIcon;
-	JLabel helpIcon;
-	JLabel tasksIcon;
-	JLabel smallMenuAboutIcon;
-	JLabel smallMenuBeginingIcon;
-	JLabel smallMenuEndIcon;
-	JLabel smallMenuResultsIcon;
-	JLabel closeIcon;
-	JLabel restoreIcon;
-	JLabel hideIcon;
-
-	// ������ �������� (� ������� ����) �� �����������
-	private int logoSpace = 289;
-	// ������ ����� �������� ����
-	private int iconsSpace = 10;
-
-	// ��� �������������� ����
-	private Point lastDragPosition;
-
-	private TaskGroup[] taskGroups;
-	private Task[] tasks;
-
-	private int currentTaskGroup = 0;
-	private int currentTask = 0;
-
-	Popup popup = null;
-	MenuPanel popupMenuPanel;
-
-	private String[][] resultsRows;
-
+	////////////////////////////////////////
+	// SCREEN NAVIGATION
+	////////////////////////////////////////
 	/** Current method name */
-	private String currentMethod;
+	public static String currentMethod;
 	/** Parameter types of current method */
-	Class[] paramTypes;
+	private static Class[] paramTypes;
 	/** Arguments of current method */
-	Object[] args;
+	private static Object[] args;
 
-	private boolean resized = false;
+	////////////////////////////////////////
+	// USER DATA
+	////////////////////////////////////////
+	public static String userName = "";
+	public static String userPass = "";
+	private static boolean specialistLogged;
 
-	private MouseListener draggingMouseListener;
-	private MouseMotionListener draggingMouseMotionListener;
+	////////////////////////////////////////
+	// USER STATISTICS
+	////////////////////////////////////////
+	private static String[][] resultsRows;
 
 	public Reabilitation() {
 		super("Reabilitation");
 		reabilitation = this;
-		
-		if (Utills.getCheckUpdatesAuto()) {
+
+		if (Utils.getCheckUpdatesAuto()) {
 			String location = null;
 			try {
-				location = HTTPClient.getVersion(Utills.getVersionDate());
+				location = HTTPClient.getVersion(Utils.getVersionDate());
 			} catch (ServerConnectionException e2) {
 				e2.printStackTrace();
 				Dialogs.showServerConnectionErrorDialog(e2);
@@ -185,10 +202,7 @@ public class Reabilitation extends JFrame {
 			if (location != null) {
 				// update
 				// show dialog
-				CustomDialog d1 = new CustomDialog(reabilitation,
-						InterfaceTextDefaults.getInstance().getDefault("do_update"),
-						InterfaceTextDefaults.getInstance().getDefault("yes"),
-						InterfaceTextDefaults.getInstance().getDefault("no"), false);
+				CustomDialog d1 = new CustomDialog(reabilitation, "do_update", "yes", "no", false);
 				if (d1.getAnswer() == 1) {
 					try {
 						Process proc = Runtime.getRuntime().exec("java -jar updater.jar " + location);
@@ -200,51 +214,27 @@ public class Reabilitation extends JFrame {
 					return;
 			}
 		}
-		
-		setBounds(50, 50, width, height);
+
+		setBounds(50, 50, WINDOW_WIDTH, WINDOW_HEIGHT);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// ������ ����������� ������ ���������
-		this.setUndecorated(true);
-
-		InternalEventHandler internalEventHandler = new InternalEventHandler();
-		long eventMask = MouseEvent.MOUSE_PRESSED;
-		Toolkit.getDefaultToolkit().addAWTEventListener(internalEventHandler, eventMask);
+		setUndecorated(true);
+		Toolkit.getDefaultToolkit().addAWTEventListener(new TasksPopupMenuHandler(), MouseEvent.MOUSE_PRESSED);
 
 		draggingMouseListener = new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				lastDragPosition = e.getLocationOnScreen();
 			}
 		};
+		draggingMouseMotionListener = new WindowDraggingListener();
 
-		draggingMouseMotionListener = new MouseMotionAdapter() {
-			@Override
-			public void mouseDragged(MouseEvent e) {
-
-				Point currentDragPosition = e.getLocationOnScreen();
-				int deltaX = currentDragPosition.x - lastDragPosition.x;
-				int deltaY = currentDragPosition.y - lastDragPosition.y;
-				if (deltaX != 0 || deltaY != 0) {
-					int x = getLocation().x + deltaX;
-					int y = getLocation().y + deltaY;
-					setLocation(x, y);
-					lastDragPosition = currentDragPosition;
-				}
-			}
-		};
-
-		showFirstScreen();
+		showLoginScreen();
 	}
 
-	/**
-	 * ���������� ��������� ����� ��� �������� ��� �����������
-	 * 
-	 * @param specLogged
-	 *            ���� ����, ��� ��������� ����������
-	 */
 	private void start(boolean specLogged) {
-		panel = new BgPanel(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BACKGROUND));
+		specialistLogged = specLogged;
+		panel = new BackgroundPanel(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BACKGROUND),
+				WINDOW_WIDTH, WINDOW_HEIGHT);
 
 		menuPanel = new CustomPanel(new Color(55, 71, 79));
 		menuPanel.setOpaque(false);
@@ -261,7 +251,7 @@ public class Reabilitation extends JFrame {
 		headerPanel = new JPanel();
 		headerPanel.setOpaque(false);
 		headerPanel.setLayout(new BoxLayout(headerPanel, BoxLayout.X_AXIS));
-		headerPanel.setPreferredSize(new Dimension(width, 60));
+		headerPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, 60));
 
 		panel.setDoubleBuffered(true);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -275,48 +265,27 @@ public class Reabilitation extends JFrame {
 		panel.add(Box.createVerticalStrut(7));
 		setContentPane(panel);
 
-		if (specLogged)
-			showUsers();
-		else
-			showGroups();
+		showGroups();
 	}
 
 	public void createWindowButtons() {
 		windowPanel = new JPanel();
 		windowPanel.setOpaque(false);
 
-		closeIcon = new JLabel();
-		restoreIcon = new JLabel();
-		hideIcon = new JLabel();
-		WindowMouseListener l = new WindowMouseListener();
-
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.CLOSE));
-		closeIcon.setIcon(icon);
-		closeIcon.setName("close");
-		closeIcon.addMouseListener(l);
-		closeIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		WindowButtonsMouseListener windowButtonsMouseListener = new WindowButtonsMouseListener();
+		closeIcon = new CustomLabel("close", ImageLinkDefaults.Key.CLOSE, windowButtonsMouseListener);
 		closeIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RESTORE));
-		restoreIcon.setIcon(icon);
-		restoreIcon.setName("restore");
-		restoreIcon.addMouseListener(l);
-		restoreIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		restoreIcon = new CustomLabel("restore", ImageLinkDefaults.Key.RESTORE, windowButtonsMouseListener);
 		restoreIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
-
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HIDE));
-		hideIcon.setIcon(icon);
-		hideIcon.setName("hide");
-		hideIcon.addMouseListener(l);
-		hideIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		hideIcon = new CustomLabel("hide", ImageLinkDefaults.Key.HIDE, windowButtonsMouseListener);
 		hideIcon.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
 
 		windowPanel.removeAll();
-		windowPanel.setPreferredSize(new Dimension(width, (int) Math.round(height * 0.038)));
+		windowPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, (int) Math.round(WINDOW_HEIGHT * 0.038)));
 		windowPanel.setLayout(new BoxLayout(windowPanel, BoxLayout.X_AXIS));
 		windowPanel.add(Box.createHorizontalGlue());
 
-		float space = (float) (width * 0.032);
+		float space = (float) (WINDOW_WIDTH * 0.032);
 		if (resized)
 			space *= 1.05;
 
@@ -334,10 +303,11 @@ public class Reabilitation extends JFrame {
 		windowPanel.repaint();
 	}
 
-	/**
-	 * ���������� ������ �������������
-	 */
 	public void showUsers() {
+		menuPanel.setX1(0);
+		menuPanel.setX2(0);
+		menuPanel.repaint();
+
 		currentMethod = "showUsers";
 		paramTypes = new Class[] {};
 		args = new Object[] {};
@@ -347,15 +317,25 @@ public class Reabilitation extends JFrame {
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("users") + "</div></html>";
-		heading.setText(t);
+		CustomLabel heading = new CustomLabel("users", 24, new Color(70, 110, 122), true);
+		CustomButton newUser = new CustomButton("create_new_user", 
+												new Color(38, 166, 154), 
+												300, 
+												35);
+		newUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				editUserOrNewUser(null, null);
+			}
+		});
 
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(heading);
 		heading.setAlignmentY(BOTTOM_ALIGNMENT);
+		headerPanel.add(Box.createHorizontalStrut(20));
+		headerPanel.add(newUser);
+		newUser.setAlignmentY(BOTTOM_ALIGNMENT);
+		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(Box.createHorizontalGlue());
 		headerPanel.revalidate();
 		headerPanel.repaint();
@@ -363,9 +343,19 @@ public class Reabilitation extends JFrame {
 		String rows[][] = null;
 		try {
 			rows = HTTPClient.listPatients();
+			if (rows.length == 0) {
+				actualPanel.revalidate();
+				actualPanel.repaint();
+				return;
+			}
 		} catch (ServerConnectionException e) {
 			e.printStackTrace();
 			Dialogs.showServerConnectionErrorDialog(e);
+			return;
+		} catch (ProgramFilesBrokenException e1) {
+			e1.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e1);
+			return;
 		}
 
 		UserTableModel model = new UserTableModel(rows);
@@ -433,34 +423,38 @@ public class Reabilitation extends JFrame {
 					} catch (ServerConnectionException e) {
 						e.printStackTrace();
 						Dialogs.showServerConnectionErrorDialog(e);
+					} catch (ProgramFilesBrokenException e) {
+						e.printStackTrace();
+						Dialogs.showFilesBrokenErrorDialog(e);
 					}
 					showUsers();
 				}
 
 				if (col == 3) {
-					editUser((String) table.getModel().getValueAt(row, 2),
+					editUserOrNewUser((String) table.getModel().getValueAt(row, 2),
 							(String) table.getModel().getValueAt(row, 1));
 				}
 			}
 		});
 
-		table.setPreferredScrollableViewportSize(
-				new Dimension((int) (Math.min(tableWidth, Math.round(width * 0.9)) + 10),
-						(int) Math.min(tableHeight, Math.round(height * 0.7))));
+		int maxWidth = (int) (Math.min(tableWidth, Math.round(WINDOW_WIDTH * 0.9)) + 10);
+		int maxHeight = (int) Math.min(tableHeight, Math.round(WINDOW_HEIGHT * 0.6));
+
+		table.setPreferredScrollableViewportSize(new Dimension(maxWidth, maxHeight));
 		JScrollPane scroll = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		scroll.getVerticalScrollBar().setUI(new ScrollBarCustomUI());
 		scroll.getHorizontalScrollBar().setUI(new ScrollBarCustomUI());
 		scroll.setBorder(BorderFactory.createEmptyBorder());
-		scroll.setOpaque(false);
-		scroll.setMaximumSize(new Dimension(Math.min(tableWidth, 900) + 10, Math.min(tableHeight, 500)));
+		scroll.setOpaque(true);
+		scroll.setMaximumSize(new Dimension(maxWidth, maxHeight));
 		c.anchor = GridBagConstraints.NORTH;
 		c.fill = GridBagConstraints.NONE;
 		c.gridheight = GridBagConstraints.REMAINDER;
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 0;
 		c.gridy = 0;
-		c.insets = new Insets((int) Math.round(height * 0.1), 0, 0, 0);
+		c.insets = new Insets((int) Math.round(WINDOW_HEIGHT * 0.1), 0, 0, 0);
 		c.ipadx = 0;
 		c.ipady = 0;
 		c.weightx = 0.0;
@@ -473,14 +467,15 @@ public class Reabilitation extends JFrame {
 	}
 
 	/**
-	 * ���������� ��������
+	 * Shows sign in/up screen
 	 */
-	public void showFirstScreen() {
-		currentMethod = "showFirstScreen";
+	public void showLoginScreen() {
+		currentMethod = "showLoginScreen";
 		paramTypes = new Class[] {};
 		args = new Object[] {};
 
-		panel = new BgPanel(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.FIRST_SCREEN));
+		panel = new BackgroundPanel(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.FIRST_SCREEN),
+				WINDOW_WIDTH, WINDOW_HEIGHT);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 		createWindowButtons();
@@ -493,187 +488,101 @@ public class Reabilitation extends JFrame {
 		JPanel p = new JPanel();
 		p.setOpaque(false);
 		p.setLayout(new GridBagLayout());
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(176, 190, 197);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("authorization") + "</div></html>";
-		heading.setText(t);
+		CustomLabel heading = new CustomLabel("authorization", 24, new Color(176, 190, 197), true);
 
-		JRadioButton neww = new JRadioButton("<html><div style='font: 14pt Arial Narrow; color: rgb(176, 190, 197);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("new_user").toUpperCase() + "</div></html>");
-		neww.setActionCommand("neww");
-		neww.setSelected(true);
-		neww.setOpaque(false);
-		neww.setFocusable(false);
-		neww.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RADIO)));
-		neww.setSelectedIcon(
-				Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RADIO_SELECTED)));
-
-		JRadioButton enter = new JRadioButton("<html><div style='font: 14pt Arial Narrow; color: rgb(176, 190, 197);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("enter").toUpperCase() + "</div></html>");
-		enter.setActionCommand("enter");
-		enter.setSelected(false);
-		enter.setOpaque(false);
-		enter.setFocusable(false);
-		enter.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RADIO)));
-		enter.setSelectedIcon(
-				Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RADIO_SELECTED)));
-
-		ButtonGroup group = new ButtonGroup();
-		group.add(neww);
-		group.add(enter);
-
-		CustomPasswordField pass = new CustomPasswordField(30, InterfaceTextDefaults.getInstance().getDefault("password"));
-		CustomTextField login = new CustomTextField(30,
+		CustomPasswordField pass = new CustomPasswordField(28,
+				InterfaceTextDefaults.getInstance().getDefault("password"));
+		CustomTextField login = new CustomTextField(28,
 				InterfaceTextDefaults.getInstance().getDefault("name_surname_patronymic"));
 
-		JButton loginSpec = new JButton(InterfaceTextDefaults.getInstance().getDefault("rule_users"));
-		loginSpec.setUI(new ButtonCustomUI(new Color(96, 125, 139), new Color(144, 164, 174)));
-		loginSpec.setBorder(null);
-		loginSpec.setOpaque(false);
-		loginSpec.setPreferredSize(new Dimension(235, 40));
-		loginSpec.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		loginSpec.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-
-				// TODO dialog, later
-				CustomDialog d1 = new CustomDialog(reabilitation,
-						InterfaceTextDefaults.getInstance().getDefault("login_spec_text"),
-						InterfaceTextDefaults.getInstance().getDefault("enter2"),
-						InterfaceTextDefaults.getInstance().getDefault("cancel"));
-				if (d1.getAnswer() == 1) {
-					try {
-						if (HTTPClient.loginSpec(d1.getLogin().trim(), d1.getPass().trim())) {
-							userName = d1.getLogin().trim();
-							userCardNumber = d1.getPass().trim();
-							start(true);
-						}
-					} catch (ServerConnectionException e1) {
-						e1.printStackTrace();
-						Dialogs.showServerConnectionErrorDialog(e1);
-					}
-				}
-			}
-		});
-
-		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("enter2"));
-		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-		start.setBorder(null);
-		start.setOpaque(false);
-		start.setPreferredSize(new Dimension(73, 40));
-		start.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton start = new CustomButton("enter2", new Color(38, 166, 154), 73, 40);
 		start.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (neww.isSelected()) {
-					try {
-						if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass()))
-							return;
-					} catch (ServerConnectionException e1) {
-						e1.printStackTrace();
-						Dialogs.showServerConnectionErrorDialog(e1);
+				try {
+					if (HTTPClient.loginSpec(login.getText().trim(), pass.getPass())) {
+						userName = login.getText().trim();
+						userPass = pass.getPass();
+						start(true);
+					} else if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass())) {
+						userName = login.getText().trim();
+						userPass = pass.getPass();
+						start(false);
 					}
-					try {
-						HTTPClient.newPatient(login.getText().trim(), pass.getPass());
-					} catch (ServerConnectionException e1) {
-						e1.printStackTrace();
-						Dialogs.showServerConnectionErrorDialog(e1);
-					}
-					userName = login.getText().trim();
-					userCardNumber = pass.getPass();
-					start(false);
-				} else
-					try {
-						if (HTTPClient.loginPatient(login.getText().trim(), pass.getPass())) {
-							userName = login.getText().trim();
-							userCardNumber = pass.getPass();
-							start(false);
-						}
-					} catch (ServerConnectionException e1) {
-						e1.printStackTrace();
-						Dialogs.showServerConnectionErrorDialog(e1);
-					}
+					else
+						new CustomDialog(reabilitation, "failed_login", "ok", null, true);
+				} catch (ServerConnectionException e1) {
+					e1.printStackTrace();
+					Dialogs.showServerConnectionErrorDialog(e1);
+				} catch (ProgramFilesBrokenException e1) {
+					e1.printStackTrace();
+					Dialogs.showFilesBrokenErrorDialog(e1);
+				} catch (HddSerialScriptException e1) {
+					e1.printStackTrace();
+					Dialogs.showHddSerialErrorDialog(e1);
+				}
 			}
 		});
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		c.anchor = GridBagConstraints.EAST;
+		c.anchor = GridBagConstraints.CENTER;
 		c.fill = GridBagConstraints.NONE;
 		c.gridheight = 1;
 		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridx = 2;
-		c.gridy = 1;
-		c.insets = new Insets((int) -Math.round(height / 14), 0, 0, 20);
+		c.gridx = 0;
+		c.gridy = 0;
+		c.insets = new Insets(0, 0, 0, 0);
 		c.ipadx = 0;
 		c.ipady = 0;
-		c.weightx = 1.0;
-		c.weighty = 0.0;
-
-		p.add(loginSpec, c);
-
-		JLabel logo = new JLabel();
-		ImageIcon icon = Utills
-				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.KOMPLIMED));
-		logo.setIcon(icon);
-
-		c.anchor = GridBagConstraints.WEST;
-		c.gridx = 0;
-		c.gridy = 2;
-		c.insets = new Insets((int) Math.round(height / 14), (int) Math.round(width / 2.39), 0, 0);
 		c.weightx = 0.0;
-
+		c.weighty = 0.0;
+		CustomLabel logo = new CustomLabel(ImageLinkDefaults.Key.KOMPLIMED);
 		p.add(logo, c);
 
+		JPanel container = new JPanel();
+		container.setOpaque(false);
+		container.setLayout(new GridBagLayout());
+
 		c.anchor = GridBagConstraints.WEST;
 		c.gridx = 0;
-		c.gridy = 3;
-		c.insets = new Insets((int) Math.round(height / 3.5), (int) Math.round(width / 3.09), 0, 0);
-		// c.insets = new Insets(0, (int) Math.round(width / 3.09), 0, 0);
+		c.gridy = 0;
 		c.weightx = 0.0;
-
-		p.add(heading, c);
-
-		c.insets = new Insets(20, (int) Math.round(width / 3.09), 0, 0);
-		c.gridwidth = 1;
-		c.gridy = 4;
-		p.add(neww, c);
-
-		c.insets = new Insets(20, 20, 0, 0);
-		c.gridwidth = GridBagConstraints.REMAINDER;
-		c.gridx = 1;
-		p.add(enter, c);
+		container.add(heading, c);
 
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(10, (int) Math.round(width / 3.09), 0, 0);
+		c.insets = new Insets(10, 0, 0, 0);
 		c.gridwidth = 2;
-		c.gridy = 5;
+		c.gridy = 1;
 		c.gridx = 0;
-		p.add(login, c);
+		container.add(login, c);
 
-		c.gridy = 6;
-		p.add(pass, c);
+		c.gridy = 2;
+		container.add(pass, c);
 
 		c.fill = GridBagConstraints.NONE;
 		c.insets = new Insets(10, 0, 0, 0);
 		c.anchor = GridBagConstraints.EAST;
 		c.gridx = 0;
-		c.gridy = 7;
-		p.add(start, c);
+		c.gridy = 3;
+		container.add(start, c);
 
-		JLabel copyright = new JLabel();
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.COPYRIGHT));
-		copyright.setIcon(icon);
-
-		c.insets = new Insets((int) Math.round(height / 15), (int) Math.round(width / 3.09), 0, 0);
+		c.insets = new Insets((int) Math.round(WINDOW_HEIGHT / 3.5), 0, 0, 0);
 		c.anchor = GridBagConstraints.CENTER;
-		c.gridwidth = 2;
+		c.gridwidth = 1;
 		c.gridx = 0;
-		c.gridy = 8;
+		c.gridy = 1;
+		p.add(container, c);
+
+		CustomLabel copyright = new CustomLabel(ImageLinkDefaults.Key.COPYRIGHT);
+
+		c.insets = new Insets((int) Math.round(WINDOW_HEIGHT / 15), 0, 0, 0);
+		c.gridx = 0;
+		c.gridy = 2;
 		p.add(copyright, c);
 
 		p.revalidate();
 		p.repaint();
 
-		// panel.add(Box.createVerticalStrut(10));
 		panel.add(windowPanel);
 		panel.add(p);
 		setContentPane(panel);
@@ -682,54 +591,45 @@ public class Reabilitation extends JFrame {
 	}
 
 	private void createMainMenu() {
-		// TODO
-		exitIcon = new JLabel();
-		aboutIcon = new JLabel();
-		helpIcon = new JLabel();
-		tasksIcon = new JLabel();
+		MenuMouseListener menuMouseListener = new MenuMouseListener();
 
-		MenuMouseListener l = new MenuMouseListener();
+		CustomButton loginSpec = new CustomButton("rule_users", 
+													new Color(96, 125, 139), 
+													new Color(144, 164, 174), 
+													235,
+													35);
+		loginSpec.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
+					showedTask.pause();
+					CustomDialog d1 = new CustomDialog(reabilitation, "sure_break_task", "break", "cancel", true);
+					if (d1.getAnswer() == 1)
+						showUsers();
+					else if (showedTask != null)
+						showedTask.start();
+				} else
+					showUsers();
+			}
+		});
 
-		ImageIcon icon = Utills
-				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_EXIT));
-		exitIcon.setIcon(icon);
-		exitIcon.setName("exit");
-		exitIcon.addMouseListener(l);
-		exitIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		exitIcon = new CustomLabel("exit", ImageLinkDefaults.Key.MAIN_MENU_EXIT, menuMouseListener);
+		aboutIcon = new CustomLabel("about", ImageLinkDefaults.Key.MAIN_MENU_ABOUT, menuMouseListener);
+//		helpIcon = new CustomLabel("help", ImageLinkDefaults.Key.MAIN_MENU_HELP, menuMouseListener);
+		tasksIcon = new CustomLabel("tasks", ImageLinkDefaults.Key.MAIN_MENU_TASKS, menuMouseListener);
 
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_ABOUT));
-		aboutIcon.setIcon(icon);
-		aboutIcon.setName("about");
-		aboutIcon.addMouseListener(l);
-		aboutIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_HELP));
-		helpIcon.setIcon(icon);
-		helpIcon.setName("help");
-		helpIcon.addMouseListener(l);
-		helpIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_TASKS));
-		tasksIcon.setIcon(icon);
-		tasksIcon.setName("tasks");
-		tasksIcon.addMouseListener(l);
-		tasksIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-
-		JLabel userIcon = new JLabel();
-		userIcon.setIcon(Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.USER)));
+		CustomLabel userIcon = new CustomLabel(ImageLinkDefaults.Key.USER);
 
 		JLabel userNameIcon = new JLabel();
 		String t = "<html><div style='font: 14pt Arial Narrow; color: rgb(176, 190, 197);'>"
 				+ InterfaceTextDefaults.getInstance().getDefault("user").toUpperCase() + ": "
-				+ "<span style='color: rgb(255, 183, 77);'>"
-				+ "</span></div>"
+				+ "<span style='color: rgb(255, 183, 77);'>" + "</span></div>"
 				+ "<div style='font: 14pt Arial Narrow; color: rgb(255, 183, 77);'>" + userName + "</div></html>";
 		userNameIcon.setText(t);
 
-		logoSpace = (int) Math.round(width * 0.28);
+		logoSpace = (int) Math.round(WINDOW_WIDTH * 0.28);
 		if (menuPanel != null) {
 			menuPanel.removeAll();
-			menuPanel.setPreferredSize(new Dimension(width, (int) Math.round(height * 0.076)));
+			menuPanel.setPreferredSize(new Dimension(WINDOW_WIDTH, (int) Math.round(WINDOW_HEIGHT * 0.076)));
 			menuPanel.setLayout(new BoxLayout(menuPanel, BoxLayout.X_AXIS));
 
 			JLabel logo = new JLabel();
@@ -753,9 +653,13 @@ public class Reabilitation extends JFrame {
 			menuPanel.add(userNameIcon);
 			menuPanel.add(Box.createHorizontalGlue());
 
+			if (specialistLogged) {
+				menuPanel.add(loginSpec);
+				menuPanel.add(Box.createHorizontalStrut(iconsSpace));
+			}
 			menuPanel.add(tasksIcon);
-			menuPanel.add(Box.createHorizontalStrut(iconsSpace));
-			menuPanel.add(helpIcon);
+//			menuPanel.add(Box.createHorizontalStrut(iconsSpace));
+//			menuPanel.add(helpIcon);
 			menuPanel.add(Box.createHorizontalStrut(iconsSpace));
 			menuPanel.add(aboutIcon);
 			menuPanel.add(Box.createHorizontalStrut(iconsSpace));
@@ -768,42 +672,16 @@ public class Reabilitation extends JFrame {
 	}
 
 	private void createSmallMenu() {
-		smallMenuAboutIcon = new JLabel();
-		smallMenuBeginingIcon = new JLabel();
-		smallMenuEndIcon = new JLabel();
-		smallMenuResultsIcon = new JLabel();
-
-		SmallMenuMouseListener l = new SmallMenuMouseListener();
-
-		ImageIcon icon = Utills
-				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_ABOUT));
-		smallMenuAboutIcon.setIcon(icon);
-		smallMenuAboutIcon.setName("about");
-		smallMenuAboutIcon.addMouseListener(l);
-		smallMenuAboutIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		SmallMenuMouseListener smallMenuMouseListener = new SmallMenuMouseListener();
+		smallMenuAboutIcon = new CustomLabel("about", ImageLinkDefaults.Key.SMALL_MENU_ABOUT, smallMenuMouseListener);
 		smallMenuAboutIcon.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
-
-		icon = Utills
-				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_BEGINING));
-		smallMenuBeginingIcon.setIcon(icon);
-		smallMenuBeginingIcon.setName("begining");
-		smallMenuBeginingIcon.addMouseListener(l);
-		smallMenuBeginingIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		smallMenuBeginingIcon = new CustomLabel("begining", ImageLinkDefaults.Key.SMALL_MENU_BEGINING,
+				smallMenuMouseListener);
 		smallMenuBeginingIcon.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
-
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_END));
-		smallMenuEndIcon.setIcon(icon);
-		smallMenuEndIcon.setName("end");
-		smallMenuEndIcon.addMouseListener(l);
-		smallMenuEndIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		smallMenuEndIcon = new CustomLabel("end", ImageLinkDefaults.Key.SMALL_MENU_END, smallMenuMouseListener);
 		smallMenuEndIcon.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
-
-		icon = Utills
-				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_RESULTS));
-		smallMenuResultsIcon.setIcon(icon);
-		smallMenuResultsIcon.setName("results");
-		smallMenuResultsIcon.addMouseListener(l);
-		smallMenuResultsIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		smallMenuResultsIcon = new CustomLabel("results", ImageLinkDefaults.Key.SMALL_MENU_RESULTS,
+				smallMenuMouseListener);
 		smallMenuResultsIcon.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
 		headerPanel.add(smallMenuAboutIcon);
@@ -825,14 +703,19 @@ public class Reabilitation extends JFrame {
 		headerPanel.repaint();
 	}
 
-	/**
-	 * �������� ������ �������
-	 */
 	public void showGroups() {
-
-		menuPanel.setX1(width - iconsSpace * 5 - exitIcon.getWidth() - helpIcon.getWidth() - tasksIcon.getWidth()
+		menuPanel.setX1(WINDOW_WIDTH 
+				- iconsSpace * 4 
+				- exitIcon.getWidth() 
+//				- helpIcon.getWidth() 
+				- tasksIcon.getWidth()
 				- aboutIcon.getWidth() - 3);
-		menuPanel.setX2(width - iconsSpace * 5 - exitIcon.getWidth() - helpIcon.getWidth() - aboutIcon.getWidth() + 3);
+		menuPanel.setX2(
+				WINDOW_WIDTH 
+				- iconsSpace * 4 
+				- exitIcon.getWidth() 
+//				- helpIcon.getWidth() 
+				- aboutIcon.getWidth() + 3);
 		menuPanel.repaint();
 
 		currentMethod = "showGroups";
@@ -840,10 +723,7 @@ public class Reabilitation extends JFrame {
 		args = new Object[] {};
 
 		showedTask = null;
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("task_groups") + "</div></html>";
-		heading.setText(t);
+		CustomLabel heading = new CustomLabel("task_groups", 24, new Color(70, 110, 122), true);
 
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
@@ -866,10 +746,10 @@ public class Reabilitation extends JFrame {
 
 		text.setOpaque(false);
 		p.add(text);
-		text.setPreferredSize(new Dimension((int) (width * 0.9), 175));
+		text.setPreferredSize(new Dimension((int) (WINDOW_WIDTH * 0.9), 175));
 		p.setUI(new PanelCustomUI(true));
 
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.GROUPS));
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.GROUPS));
 
 		NodeList n = doc.getElementsByTagName("group");
 		NamedNodeMap k = null;
@@ -878,20 +758,20 @@ public class Reabilitation extends JFrame {
 		taskGroups = new TaskGroup[n.getLength()];
 
 		ImageIcon icon;
-		GroupsMouseListener l = new GroupsMouseListener();
+		GroupsMouseListener groupsMouseListener = new GroupsMouseListener();
 		for (int i = 0; i < n.getLength(); i++) {
 			k = n.item(i).getAttributes();
 			taskGroups[i] = new TaskGroup(k.getNamedItem("name").getNodeValue(), k.getNamedItem("text").getNodeValue(),
 					k.getNamedItem("image").getNodeValue(), k.getNamedItem("bigImage").getNodeValue(),
 					k.getNamedItem("rolloverImage").getNodeValue(), k.getNamedItem("toolTipText").getNodeValue());
 
-			icon = Utills.createImageIcon(taskGroups[i].getImage());
-			groups[i] = new CustomLabel();
+			icon = Utils.createImageIcon(taskGroups[i].getImage());
+			groups[i] = new TooltipLabel();
 			groups[i].setIcon(icon);
 			groups[i].setHorizontalTextPosition(JLabel.CENTER);
 			groups[i].setVerticalTextPosition(JLabel.BOTTOM);
 			groups[i].setName(Integer.toString(i));
-			groups[i].addMouseListener(l);
+			groups[i].addMouseListener(groupsMouseListener);
 			groups[i].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			groups[i].createToolTip();
 			groups[i].setToolTipText(
@@ -940,14 +820,8 @@ public class Reabilitation extends JFrame {
 		actualPanel.repaint();
 	}
 
-	/**
-	 * ��������� ������� ��� ������.
-	 * 
-	 * @param i
-	 *            ����� ������
-	 */
 	private void readTasks(int i) {
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.GROUPS));
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.GROUPS));
 
 		NodeList n = doc.getElementsByTagName("group");
 		NamedNodeMap k = null;
@@ -964,12 +838,6 @@ public class Reabilitation extends JFrame {
 		}
 	}
 
-	/**
-	 * �������� ���������� ������ ������.
-	 * 
-	 * @param i
-	 *            ����� ������
-	 */
 	public void showTasks(int i) {
 		menuPanel.setX1(0);
 		menuPanel.setX2(0);
@@ -984,7 +852,7 @@ public class Reabilitation extends JFrame {
 		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
 				+ taskGroups[i].getName().toUpperCase() + "</div></html>";
 		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
+		ImageIcon icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
 		heading.setIcon(icon);
 		heading.setIconTextGap(20);
 		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -1002,9 +870,7 @@ public class Reabilitation extends JFrame {
 		headerPanel.revalidate();
 		headerPanel.repaint();
 
-		JLabel image = new JLabel();
-		icon = Utills.createImageIcon(taskGroups[i].getBigImage());
-		image.setIcon(icon);
+		CustomLabel image = new CustomLabel(taskGroups[i].getBigImage());
 
 		JTextPane text = new JTextPane();
 		text.setEditable(false);
@@ -1012,12 +878,13 @@ public class Reabilitation extends JFrame {
 		text.setText("<html><div style='font: 15pt Arial Narrow; color: rgb(68, 83, 91);'>" + taskGroups[i].getText()
 				+ "</div></html>");
 		text.setOpaque(false);
-		text.setPreferredSize(new Dimension((int) (width * 0.85 - image.getPreferredSize().getWidth()), 300));
+		text.setPreferredSize(new Dimension((int) (WINDOW_WIDTH * 0.85 - image.getPreferredSize().getWidth()), 300));
 
 		JScrollPane scroll = new JScrollPane(text);
 		scroll.setOpaque(false);
 		scroll.getViewport().setOpaque(false);
-		scroll.setPreferredSize(new Dimension((int) (width * 0.85 - image.getPreferredSize().getWidth()), (int) (300)));
+		scroll.setPreferredSize(
+				new Dimension((int) (WINDOW_WIDTH * 0.85 - image.getPreferredSize().getWidth()), (int) (300)));
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(null);
@@ -1030,13 +897,13 @@ public class Reabilitation extends JFrame {
 		p.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		JLabel[] tasksLabels = new JLabel[tasks.length];
-		TasksMouseListener l = new TasksMouseListener();
+		TasksMouseListener tasksMouseListener = new TasksMouseListener();
 
 		for (int j = 0; j < Math.ceil((double) tasks.length / 2); j++) {
 			for (int k = 0; k < 2; k++) {
 				if ((j * 2 + k) == tasks.length)
 					break;
-				icon = Utills.createImageIcon(tasks[j * 2 + k].getImage());
+				icon = Utils.createImageIcon(tasks[j * 2 + k].getImage());
 				tasksLabels[j * 2 + k] = new JLabel(
 						"<html><div style='font: 19pt Arial Narrow; color: rgb(115, 84, 73); text-align: center; margin-bottom: 5px; margin-top: 5px;'>"
 								+ InterfaceTextDefaults.getInstance().getDefault("task_number")
@@ -1050,7 +917,7 @@ public class Reabilitation extends JFrame {
 				tasksLabels[j * 2 + k]
 						.setPreferredSize(new Dimension(icon.getIconWidth() + 120, (int) (icon.getIconHeight() + 100)));
 				tasksLabels[j * 2 + k].setName(Integer.toString(j * 2 + k));
-				tasksLabels[j * 2 + k].addMouseListener(l);
+				tasksLabels[j * 2 + k].addMouseListener(tasksMouseListener);
 				tasksLabels[j * 2 + k].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 				c.anchor = GridBagConstraints.NORTH;
 				c.fill = GridBagConstraints.NONE;
@@ -1070,7 +937,7 @@ public class Reabilitation extends JFrame {
 
 		JScrollPane scrollTasks = new JScrollPane(p);
 		scrollTasks.setPreferredSize(new Dimension((int) (text.getPreferredSize().getWidth()),
-				(int) (height * 0.7 - text.getPreferredSize().getHeight())));
+				(int) (WINDOW_HEIGHT * 0.7 - text.getPreferredSize().getHeight())));
 		scrollTasks.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollTasks.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollTasks.getViewport().setOpaque(false);
@@ -1113,33 +980,21 @@ public class Reabilitation extends JFrame {
 		actualPanel.repaint();
 	}
 
-	/**
-	 * �������� �������� ������� � ������� i.
-	 * 
-	 * @param i
-	 *            ����� ������� ������ ������
-	 */
 	public void showTaskInfo(int i) {
 		currentMethod = "showTaskInfo";
 		paramTypes = new Class[] { int.class };
 		args = new Object[] { i };
 
 		showedTask = null;
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("task_number") + Integer.toString(i + 1) + ": "
-				+ tasks[i].getName().toUpperCase() + "</div></html>";
-		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
-		heading.setIcon(icon);
-		heading.setIconTextGap(20);
-		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		heading.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				showTasks(currentTaskGroup);
-			}
-		});
+		String headingText = InterfaceTextDefaults.getInstance().getDefault("task_number") + Integer.toString(i + 1)
+				+ ": " + tasks[i].getName().toUpperCase();
+		CustomLabel heading = new CustomLabel(headingText, 24, new Color(70, 110, 122), true,
+				ImageLinkDefaults.Key.ARROW, 20, new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						showTasks(currentTaskGroup);
+					}
+				});
 
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
@@ -1150,9 +1005,7 @@ public class Reabilitation extends JFrame {
 		headerPanel.repaint();
 		createSmallMenu();
 
-		JLabel image = new JLabel();
-		icon = Utills.createImageIcon(tasks[i].getBigImage());
-		image.setIcon(icon);
+		CustomLabel image = new CustomLabel(tasks[i].getBigImage());
 
 		JTextPane text = new JTextPane();
 		text.setEditable(false);
@@ -1162,16 +1015,11 @@ public class Reabilitation extends JFrame {
 				+ "</div><div  style='font: 16pt Arial Narrow; color: rgb(115, 84, 73);'>" + tasks[i].getLongText()
 				+ "</div></html>");
 		text.setOpaque(false);
-		text.setPreferredSize(new Dimension((int) (width * 0.85 - image.getPreferredSize().getWidth()),
-				100 + Utills.calculateTextHeight(text.getText(),
-						(int) (width * 0.85 - image.getPreferredSize().getWidth()), text)));
+		text.setPreferredSize(new Dimension((int) (WINDOW_WIDTH * 0.85 - image.getPreferredSize().getWidth()),
+				100 + Utils.calculateTextHeight(text.getText(),
+						(int) (WINDOW_WIDTH * 0.85 - image.getPreferredSize().getWidth()), text)));
 
-		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
-		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-		start.setBorder(null);
-		start.setOpaque(false);
-		start.setPreferredSize(new Dimension(200, 35));
-		start.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton start = new CustomButton("begin_task", new Color(38, 166, 154), 200, 35);
 		start.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showTask(i);
@@ -1214,8 +1062,8 @@ public class Reabilitation extends JFrame {
 	}
 
 	public void showAbout() {
-		menuPanel.setX1(width - iconsSpace * 3 - exitIcon.getWidth() - aboutIcon.getWidth() - 3);
-		menuPanel.setX2(width - iconsSpace * 3 - exitIcon.getWidth() + 3);
+		menuPanel.setX1(WINDOW_WIDTH - iconsSpace * 3 - exitIcon.getWidth() - aboutIcon.getWidth() - 3);
+		menuPanel.setX2(WINDOW_WIDTH - iconsSpace * 3 - exitIcon.getWidth() + 3);
 		menuPanel.repaint();
 
 		currentMethod = "showAbout";
@@ -1225,14 +1073,14 @@ public class Reabilitation extends JFrame {
 		// read version
 		String v = null;
 		try {
-			v = Utills.getVersion();
+			v = Utils.getVersion();
 		} catch (ProgramFilesBrokenException e4) {
 			e4.printStackTrace();
 			Dialogs.showFilesBrokenErrorDialog(e4);
 		}
 		String dd = null;
 		try {
-			dd = Utills.getVersionDate();
+			dd = Utils.getVersionDate();
 		} catch (ProgramFilesBrokenException e4) {
 			e4.printStackTrace();
 			Dialogs.showFilesBrokenErrorDialog(e4);
@@ -1242,8 +1090,8 @@ public class Reabilitation extends JFrame {
 		String name = null;
 		String keyNumber = null;
 		try {
-			name = Utills.getLicenceUserName();
-			keyNumber = Utills.getLicenceKey();
+			name = Utils.getLicenceUserName();
+			keyNumber = Utils.getLicenceKey();
 		} catch (ProgramFilesBrokenException e3) {
 			e3.printStackTrace();
 			Dialogs.showFilesBrokenErrorDialog(e3);
@@ -1285,20 +1133,14 @@ public class Reabilitation extends JFrame {
 		}
 
 		showedTask = null;
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("about") + "</div></html>";
-		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
-		heading.setIcon(icon);
-		heading.setIconTextGap(20);
-		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		heading.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				showGroups();
-			}
-		});
+		CustomLabel heading = new CustomLabel(InterfaceTextDefaults.getInstance().getDefault("about"), 24,
+				new Color(70, 110, 122), true, ImageLinkDefaults.Key.ARROW, 20, new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						showGroups();
+					}
+				});
+
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(heading);
@@ -1308,7 +1150,7 @@ public class Reabilitation extends JFrame {
 		headerPanel.repaint();
 
 		JLabel key = new JLabel();
-		t = "<html><div style='font: bold 14pt Arial Narrow; color: rgb(70, 110, 122);'>"
+		String t = "<html><div style='font: bold 14pt Arial Narrow; color: rgb(70, 110, 122);'>"
 				+ InterfaceTextDefaults.getInstance().getDefault("key")
 				+ ": <span style='font: 15pt Arial Narrow; color: rgb(115, 84, 73);'>" + keyNumber
 				+ "</span></div></html>";
@@ -1342,21 +1184,17 @@ public class Reabilitation extends JFrame {
 				+ InterfaceTextDefaults.getInstance().getDefault("from") + " " + dd + "</span></div></html>";
 		version.setText(t);
 
-		JButton checkUpdates = new JButton(InterfaceTextDefaults.getInstance().getDefault("check_updates"));
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.CIRCLE_ARROW));
+		CustomButton checkUpdates = new CustomButton("check_updates", new Color(38, 166, 154), 252, 40);
+		ImageIcon icon = Utils
+				.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.CIRCLE_ARROW));
 		checkUpdates.setIcon(icon);
 		checkUpdates.setIconTextGap(20);
-		checkUpdates.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-		checkUpdates.setBorder(null);
-		checkUpdates.setOpaque(false);
-		checkUpdates.setPreferredSize(new Dimension(252, 40));
-		checkUpdates.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		checkUpdates.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// ask DB for updates
 				String location = null;
 				try {
-					location = HTTPClient.getVersion(Utills.getVersionDate());
+					location = HTTPClient.getVersion(Utils.getVersionDate());
 				} catch (ServerConnectionException e2) {
 					e2.printStackTrace();
 					Dialogs.showServerConnectionErrorDialog(e2);
@@ -1367,10 +1205,7 @@ public class Reabilitation extends JFrame {
 				if (location != null) {
 					// update
 					// show dialog
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("do_update"),
-							InterfaceTextDefaults.getInstance().getDefault("yes"),
-							InterfaceTextDefaults.getInstance().getDefault("no"), true);
+					CustomDialog d1 = new CustomDialog(reabilitation, "do_update", "yes", "no", true);
 					if (d1.getAnswer() == 1) {
 						try {
 							System.out.println(location);
@@ -1384,8 +1219,7 @@ public class Reabilitation extends JFrame {
 				} else {
 					// don't update
 					// show dialog
-					new CustomDialog(reabilitation, InterfaceTextDefaults.getInstance().getDefault("no_updates"),
-							InterfaceTextDefaults.getInstance().getDefault("ok"), null, true);
+					new CustomDialog(reabilitation, "no_updates", "ok", null, true);
 				}
 			}
 		});
@@ -1393,24 +1227,21 @@ public class Reabilitation extends JFrame {
 		JCheckBox checkAuto = new JCheckBox("<html><div style='font: 15pt Arial Narrow; color: rgb(115, 84, 73);'>"
 				+ InterfaceTextDefaults.getInstance().getDefault("check_updates_auto") + "</div></html>");
 		checkAuto.setOpaque(false);
-		checkAuto.setSelected(Utills.getCheckUpdatesAuto());
+		checkAuto.setSelected(Utils.getCheckUpdatesAuto());
 		checkAuto.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				String s = Utills.readFile(Utills.getFilePath() + "/config");
+				String s = Utils.readFile(Utils.getFilePath() + "/config");
 				if (checkAuto.isSelected())
 					s = s.replaceAll("<checkUpdatesAuto>.*</checkUpdatesAuto>",
 							"<checkUpdatesAuto>true</checkUpdatesAuto>");
 				else
 					s = s.replaceAll("<checkUpdatesAuto>.*</checkUpdatesAuto>",
 							"<checkUpdatesAuto>false</checkUpdatesAuto>");
-				Utills.writeFile(s, Utills.getFilePath() + "/config");
+				Utils.writeFile(s, Utils.getFilePath() + "/config");
 			}
 		});
 
-		JLabel about = new JLabel();
-		t = "<html><div style='font: bold 22pt Arial Narrow; color: rgb(115, 84, 73);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("about") + "</div></html>";
-		about.setText(t);
+		CustomLabel about = new CustomLabel("about", 22, new Color(115, 84, 73), true);
 
 		JTextPane text = new JTextPane();
 		text.setEditable(false);
@@ -1423,7 +1254,7 @@ public class Reabilitation extends JFrame {
 		}
 
 		JScrollPane scroll = new JScrollPane(text);
-		scroll.setPreferredSize(new Dimension((int) (width * 0.95), (int) (height * 0.45)));
+		scroll.setPreferredSize(new Dimension((int) (WINDOW_WIDTH * 0.95), (int) (WINDOW_HEIGHT * 0.45)));
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(null);
@@ -1508,8 +1339,16 @@ public class Reabilitation extends JFrame {
 	}
 
 	public void showHelp() {
-		menuPanel.setX1(width - iconsSpace * 4 - exitIcon.getWidth() - helpIcon.getWidth() - aboutIcon.getWidth() - 3);
-		menuPanel.setX2(width - iconsSpace * 4 - exitIcon.getWidth() - aboutIcon.getWidth() + 3);
+		menuPanel.setX1(
+				WINDOW_WIDTH 
+				- iconsSpace * 4 
+				- exitIcon.getWidth() 
+//				- helpIcon.getWidth() 
+				- aboutIcon.getWidth() - 3);
+		menuPanel.setX2(WINDOW_WIDTH 
+				- iconsSpace * 4 
+				- exitIcon.getWidth() 
+				- aboutIcon.getWidth() + 3);
 		menuPanel.repaint();
 
 		currentMethod = "showHelp";
@@ -1517,20 +1356,14 @@ public class Reabilitation extends JFrame {
 		args = new Object[] {};
 
 		showedTask = null;
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("help") + "</div></html>";
-		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
-		heading.setIcon(icon);
-		heading.setIconTextGap(20);
-		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		heading.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				showGroups();
-			}
-		});
+		CustomLabel heading = new CustomLabel(InterfaceTextDefaults.getInstance().getDefault("help"), 24,
+				new Color(70, 110, 122), true, ImageLinkDefaults.Key.ARROW, 20, new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						showGroups();
+					}
+				});
+
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(heading);
@@ -1539,10 +1372,7 @@ public class Reabilitation extends JFrame {
 		headerPanel.revalidate();
 		headerPanel.repaint();
 
-		JLabel faq = new JLabel();
-		String t1 = "<html><div style='font: 22pt Arial Narrow; color: rgb(115, 84, 73); padding-left: 17px;'><span style='font-weight: bold;'>?&nbsp;&nbsp;&nbsp;</span>"
-				+ InterfaceTextDefaults.getInstance().getDefault("faq") + "</div></html>";
-		faq.setText(t1);
+		CustomLabel faq = new CustomLabel("faq", 22, new Color(115, 84, 73), false);
 
 		JTextPane text = new JTextPane();
 		text.setEditable(false);
@@ -1574,7 +1404,7 @@ public class Reabilitation extends JFrame {
 		actualPanel.add(faq, c);
 
 		JScrollPane scroll = new JScrollPane(text);
-		scroll.setPreferredSize(new Dimension((int) (width * 0.95), (int) (height * 0.7)));
+		scroll.setPreferredSize(new Dimension((int) (WINDOW_WIDTH * 0.95), (int) (WINDOW_HEIGHT * 0.7)));
 		scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scroll.setBorder(null);
@@ -1588,12 +1418,6 @@ public class Reabilitation extends JFrame {
 		actualPanel.repaint();
 	}
 
-	/**
-	 * �������� ������� � ������� i
-	 * 
-	 * @param i
-	 *            ����� ������� ������ ������
-	 */
 	public void showTask(int i) {
 		currentMethod = "showTask";
 		paramTypes = new Class[] { int.class };
@@ -1604,65 +1428,40 @@ public class Reabilitation extends JFrame {
 		Class[] intArgsClass = new Class[] { int.class, int.class, String.class, Reabilitation.class, String.class,
 				String.class, String.class, String.class };
 		// TODO �� �� �����
-		Integer h = new Integer((int) (height * 0.75));
+		Integer h = new Integer((int) (WINDOW_HEIGHT * 0.75));
 		Integer w = new Integer(970);
 		String t1 = tasks[i].getLongLongText();
-		Object[] intArgs = new Object[] { w, h, t1, reabilitation, userName, userCardNumber, tasks[i].getName(),
+		Object[] intArgs = new Object[] { w, h, t1, reabilitation, userName, userPass, tasks[i].getName(),
 				taskGroups[currentTaskGroup].getName() };
 		Constructor intArgsConstructor = null;
 		AbstractTask p = null;
 		try {
 			c = Class.forName(s);
 			intArgsConstructor = c.getConstructor(intArgsClass);
-			p = (AbstractTask) Utills.createObject(intArgsConstructor, intArgs);
+			p = (AbstractTask) Utils.createObject(intArgsConstructor, intArgs);
 		} catch (ClassNotFoundException | NoSuchMethodException | SecurityException e1) {
 			e1.printStackTrace();
 		}
 
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("task_number") + Integer.toString(i + 1) + ": "
-				+ tasks[i].getName().toUpperCase() + "</div></html>";
-		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
-		heading.setIcon(icon);
-		heading.setIconTextGap(20);
-		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		heading.addMouseListener(new MouseListener() {
+		String t = InterfaceTextDefaults.getInstance().getDefault("task_number") + Integer.toString(i + 1) + ": "
+				+ tasks[i].getName().toUpperCase();
+		CustomLabel heading = new CustomLabel(t, 24, new Color(70, 110, 122), true, ImageLinkDefaults.Key.ARROW, 20,
+				new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						if (showedTask != null) {
+							showedTask.pause();
+							CustomDialog d1 = new CustomDialog(reabilitation, "sure_break_task", "break", "cancel",
+									true);
+							if (d1.getAnswer() == 1)
+								showTaskInfo(i);
+							else if (showedTask != null)
+								showedTask.start();
+						} else
+							showTaskInfo(i);
+					}
+				});
 
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				if (showedTask != null) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1)
-						showTaskInfo(i);
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					showTaskInfo(i);
-			}
-
-			@Override
-			public void mouseEntered(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseExited(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mousePressed(MouseEvent arg0) {
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent arg0) {
-			}
-
-		});
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(heading);
@@ -1696,12 +1495,6 @@ public class Reabilitation extends JFrame {
 		actualPanel.repaint();
 	}
 
-	/**
-	 * ���������� ���������� ����������� ��� ������������� ������������
-	 * 
-	 * @param userName
-	 *            ��� ������������
-	 */
 	public void showResults(String[][] rows, String[] taskNames, int selectedTask, Date filterDate1, Date filterDate2) {
 		currentMethod = "showResults";
 		paramTypes = new Class[] { String[][].class, String[].class, int.class, Date.class, Date.class };
@@ -1715,21 +1508,15 @@ public class Reabilitation extends JFrame {
 			for (int j = 0; j < rows[0].length; j++)
 				rowsCopy[i][j] = new String(rows[i][j]);
 
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("results") + ": " + userName.toUpperCase()
-				+ "</div></html>";
-		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
-		heading.setIcon(icon);
-		heading.setIconTextGap(20);
-		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		heading.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				showTasks(currentTaskGroup);
-			}
-		});
+		String t = InterfaceTextDefaults.getInstance().getDefault("results") + ": " + userName.toUpperCase();
+		CustomLabel heading = new CustomLabel(t, 24, new Color(70, 110, 122), true, ImageLinkDefaults.Key.ARROW, 20,
+				new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						showTasks(currentTaskGroup);
+					}
+				});
+
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
 		headerPanel.add(heading);
@@ -1744,10 +1531,7 @@ public class Reabilitation extends JFrame {
 
 		GridBagConstraints c1 = new GridBagConstraints();
 
-		JLabel subHeading = new JLabel();
-		t = "<html><div style='font: 22pt Arial Narrow; color: rgb(115, 84, 73);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("results_dynamic") + "</div></html>";
-		subHeading.setText(t);
+		CustomLabel subHeading = new CustomLabel("results_dynamic", 22, new Color(115, 84, 73), false);
 
 		c1.anchor = GridBagConstraints.WEST;
 		c1.fill = GridBagConstraints.NONE;
@@ -1763,15 +1547,12 @@ public class Reabilitation extends JFrame {
 
 		actualPanel.add(subHeading, c1);
 
-		JLabel filter = new JLabel();
-		t = "<html><div style='font: bold 16pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("filter") + "</div></html>";
-		filter.setText(t);
+		CustomLabel filter = new CustomLabel("filter", 16, new Color(70, 110, 122), true);
 
 		JPanel p = new JPanel();
 		p.setOpaque(false);
 		p.setLayout(new GridBagLayout());
-		p.setPreferredSize(new Dimension(width, 40));
+		p.setPreferredSize(new Dimension(WINDOW_WIDTH, 40));
 
 		c1.gridwidth = 1;
 		c1.insets = new Insets(10, 40, 0, 0);
@@ -1789,10 +1570,7 @@ public class Reabilitation extends JFrame {
 		c1.gridx = 1;
 		p.add(tasks, c1);
 
-		JLabel interval = new JLabel();
-		t = "<html><div style='font: 16pt Arial Narrow; color: rgb(68, 83, 91);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("interval") + "</div></html>";
-		interval.setText(t);
+		CustomLabel interval = new CustomLabel("interval", 16, new Color(68, 83, 91), false);
 
 		c1.gridx = 2;
 		p.add(interval, c1);
@@ -1833,12 +1611,7 @@ public class Reabilitation extends JFrame {
 		c1.gridx = 5;
 		p.add((Component) date2, c1);
 
-		JButton show = new JButton(InterfaceTextDefaults.getInstance().getDefault("show"));
-		show.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-		show.setBorder(null);
-		show.setOpaque(false);
-		show.setPreferredSize(new Dimension(100, 30));
-		show.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton show = new CustomButton("show", new Color(38, 166, 154), 100, 30);
 		show.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Date selectedDate1 = null, selectedDate2 = null;
@@ -2018,30 +1791,32 @@ public class Reabilitation extends JFrame {
 		return resultsPanel;
 	}
 
-	public void editUser(String userOldName, String userOldPass) {
-		currentMethod = "editUser";
+	public void editUserOrNewUser(String userOldName, String userOldPass) {
+		currentMethod = "editUserOrNewUser";
 		paramTypes = new Class[] { String.class, String.class };
 		args = new Object[] { userOldName, userOldPass };
+
+		boolean newUser = false;
+		if (userOldName == null && userOldPass == null)
+			newUser = true;
 
 		actualPanel.removeAll();
 		actualPanel.setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		JLabel heading = new JLabel();
-		String t = "<html><div style='font: bold 24pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("edit_user") + "</div></html>";
-		heading.setText(t);
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
-		heading.setIcon(icon);
-		heading.setIconTextGap(20);
-		heading.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		heading.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent arg0) {
-				showUsers();
-			}
-		});
+		String headingText;
+		if (newUser)
+			headingText = InterfaceTextDefaults.getInstance().getDefault("create_new_user_heading");
+		else
+			headingText = InterfaceTextDefaults.getInstance().getDefault("edit_user");
+		CustomLabel heading = new CustomLabel(headingText, 24, new Color(70, 110, 122), true,
+				ImageLinkDefaults.Key.ARROW, 20, new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						showUsers();
+					}
+				});
 
 		headerPanel.removeAll();
 		headerPanel.add(Box.createHorizontalStrut(20));
@@ -2051,53 +1826,52 @@ public class Reabilitation extends JFrame {
 		headerPanel.revalidate();
 		headerPanel.repaint();
 
-		JLabel cardNumberLabel = new JLabel();
-		t = "<html><div style='font: bold 19pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("password").toUpperCase() + "</div></html>";
-		cardNumberLabel.setText(t);
+		CustomLabel passwordLabel = new CustomLabel("password", 19, new Color(70, 110, 122), true);
+		CustomLabel nameLabel = new CustomLabel("name_surname_patronymic", 19, new Color(70, 110, 122), true);
 
-		JLabel nameLabel = new JLabel();
-		t = "<html><div style='font: bold 19pt Arial Narrow; color: rgb(70, 110, 122);'>"
-				+ InterfaceTextDefaults.getInstance().getDefault("name_surname_patronymic").toUpperCase()
-				+ "</div></html>";
-		nameLabel.setText(t);
-
-		CustomTextField cardNumberField = new CustomTextField(40, "");
-		cardNumberField.setText(userOldPass);
+		JTextField passwordField;
+		if (newUser)
+			passwordField = new CustomPasswordField(40, "");
+		else {
+			passwordField = new CustomTextField(40, "");
+			passwordField.setText(userOldPass);
+		}
 
 		CustomTextField nameField = new CustomTextField(40, "");
 		nameField.setText(userOldName);
 
-		JButton cancel = new JButton(InterfaceTextDefaults.getInstance().getDefault("cancel"));
-		cancel.setUI(new ButtonCustomUI(new Color(239, 83, 80)));
-		cancel.setBorder(null);
-		cancel.setOpaque(false);
-		cancel.setPreferredSize(new Dimension(180, 35));
-		cancel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton cancel = new CustomButton("cancel", new Color(239, 83, 80), 180, 35);
 		cancel.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				showUsers();
 			}
 		});
 
-		JButton save = new JButton(InterfaceTextDefaults.getInstance().getDefault("save"));
-		save.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
-		save.setBorder(null);
-		save.setOpaque(false);
-		save.setPreferredSize(new Dimension(180, 35));
-		save.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		CustomButton save = new CustomButton("save", new Color(38, 166, 154), 180, 35);
+		boolean creatingNewUser = newUser;
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (!nameField.getText().trim().equals("") && !cardNumberField.getText().trim().equals("")) {
+				if (!nameField.getText().trim().equals("") && !passwordField.getText().trim().equals("")) {
 					try {
-						HTTPClient.editPatient(userOldName, userOldPass, nameField.getText().trim(),
-								cardNumberField.getText().trim());
+						if (creatingNewUser) {
+							if (!HTTPClient.newPatient(nameField.getText().trim(),
+									((CustomPasswordField) passwordField).getPass().trim()))
+								new CustomDialog(reabilitation, "user_exists", "ok", null, true);
+						} else {
+							if (!HTTPClient.editPatient(userOldName, userOldPass, nameField.getText().trim(),
+									passwordField.getText().trim()))
+								new CustomDialog(reabilitation, "user_exists", "ok", null, true);
+						}
 					} catch (ServerConnectionException e1) {
 						e1.printStackTrace();
 						Dialogs.showServerConnectionErrorDialog(e1);
+					} catch (ProgramFilesBrokenException e1) {
+						e1.printStackTrace();
+						Dialogs.showFilesBrokenErrorDialog(e1);
 					}
 					showUsers();
-				}
+				} else
+					new CustomDialog(reabilitation, "fill_all_fields", "ok", null, true);
 			}
 		});
 
@@ -2124,12 +1898,12 @@ public class Reabilitation extends JFrame {
 		c.gridx = 0;
 		c.gridy = 1;
 
-		actualPanel.add(cardNumberLabel, c);
+		actualPanel.add(passwordLabel, c);
 
 		c.gridwidth = GridBagConstraints.REMAINDER;
 		c.gridx = 1;
 
-		actualPanel.add(cardNumberField, c);
+		actualPanel.add(passwordField, c);
 
 		c.gridwidth = 1;
 		c.gridy = 2;
@@ -2147,10 +1921,13 @@ public class Reabilitation extends JFrame {
 
 	public void showResults() {
 		try {
-			resultsRows = HTTPClient.findResults(userName, userCardNumber);
+			resultsRows = HTTPClient.findResults(userName, userPass);
 		} catch (ServerConnectionException e) {
 			e.printStackTrace();
 			Dialogs.showServerConnectionErrorDialog(e);
+		} catch (ProgramFilesBrokenException e) {
+			e.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e);
 		}
 		ArrayList<String> a = new ArrayList<String>();
 		for (int i = 0; i < resultsRows.length; i++)
@@ -2161,7 +1938,7 @@ public class Reabilitation extends JFrame {
 		showResults(resultsRows, a.toArray(n), 0, null, null);
 	}
 
-	private void resize() {
+	public void resize() {
 
 		Dimension sSize;
 		if (!resized) {
@@ -2176,15 +1953,16 @@ public class Reabilitation extends JFrame {
 
 			windowPanel.addMouseMotionListener(draggingMouseMotionListener);
 		}
-		height = sSize.height;
-		width = sSize.width;
+		WINDOW_HEIGHT = sSize.height;
+		WINDOW_WIDTH = sSize.width;
 		if (resized)
-			setBounds(0, 0, width, height);
+			setBounds(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 		else
-			setBounds(50, 50, width, height);
+			setBounds(50, 50, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-		if (!currentMethod.equals("showFirstScreen")) {
-			panel = new BgPanel(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BACKGROUND));
+		if (!currentMethod.equals("showLoginScreen")) {
+			panel = new BackgroundPanel(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.BACKGROUND),
+					WINDOW_WIDTH, WINDOW_HEIGHT);
 
 			createMainMenu();
 			createWindowButtons();
@@ -2195,11 +1973,8 @@ public class Reabilitation extends JFrame {
 
 			panel.setDoubleBuffered(true);
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-			// panel.add(Box.createVerticalStrut(10));
 			panel.add(windowPanel);
-			// panel.add(Box.createVerticalStrut(15));
 			panel.add(menuPanel);
-			// panel.add(Box.createVerticalStrut(15));
 			panel.add(headerPanel);
 			panel.add(actualPanel);
 			panel.add(Box.createVerticalStrut(7));
@@ -2220,19 +1995,23 @@ public class Reabilitation extends JFrame {
 			}
 		}
 	}
-
+	
 	/**
-	 * ������, �������������� ������ ���, � �������� ������������� ���������
-	 * �������.
+	 * Panel which displays background image.
 	 * 
 	 * @author Pokrovskaya Oksana
 	 *
 	 */
-	class BgPanel extends JPanel {
-		String image;
+	public class BackgroundPanel extends JPanel {
+		private static final long serialVersionUID = -2043137411007649138L;
+		private final String image;
+		private final int width;
+		private final int height;
 
-		public BgPanel(String backgroundPath) {
+		public BackgroundPanel(String backgroundPath, int width, int height) {
 			image = backgroundPath;
+			this.width = width;
+			this.height = height;
 		}
 
 		public void paintComponent(Graphics g) {
@@ -2245,465 +2024,5 @@ public class Reabilitation extends JFrame {
 			}
 			g.drawImage(im, 0, 0, width, height, this);
 		}
-	}
-
-	class MenuMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			switch (l.getName()) {
-			case "exit":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog())
-					showedTask.pause();
-				CustomDialog d = new CustomDialog(reabilitation,
-						InterfaceTextDefaults.getInstance().getDefault("sure_logout"),
-						InterfaceTextDefaults.getInstance().getDefault("exit"),
-						InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-				if (d.getAnswer() == 1)
-					showFirstScreen();
-				else if (showedTask != null)
-					showedTask.start();
-				break;
-			case "help":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1)
-						showHelp();
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					showHelp();
-
-				break;
-			case "about":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1)
-						showAbout();
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					showAbout();
-				break;
-			case "tasks":
-				if (popup != null) {
-					popup.hide();
-				}
-				PopupFactory fac = new PopupFactory();
-				Point xy = tasksIcon.getLocationOnScreen();
-				MenuPanel p = new MenuPanel(popup, reabilitation);
-				popupMenuPanel = p;
-				popup = fac
-						.getPopup(tasksIcon, p,
-								(int) ((int) xy.getX() - popupMenuPanel.getPreferredSize().getWidth()
-										+ tasksIcon.getWidth()),
-								(int) Math.round(xy.getY() + tasksIcon.getHeight() + height * 0.02));
-				popup.show();
-				break;
-			}
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			ImageIcon icon;
-			switch (l.getName()) {
-			case "exit":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_EXIT_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "help":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_HELP_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "about":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_ABOUT_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "tasks":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_TASKS_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			}
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			ImageIcon icon;
-			switch (l.getName()) {
-			case "exit":
-				icon = Utills
-						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_EXIT));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "help":
-				icon = Utills
-						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_HELP));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "about":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_ABOUT));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "tasks":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.MAIN_MENU_TASKS));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
-		}
-	}
-
-	class WindowMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			switch (l.getName()) {
-			case "close":
-				if (showedTask != null)
-					showedTask.pause();
-				if (!currentMethod.equals("showFirstScreen")) {
-					CustomDialog d = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_exit"),
-							InterfaceTextDefaults.getInstance().getDefault("exit"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d.getAnswer() == 1)
-						System.exit(0);
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					System.exit(0);
-				break;
-			case "restore":
-				resize();
-				break;
-			case "hide":
-				setState(JFrame.ICONIFIED);
-				break;
-			}
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			ImageIcon icon;
-			switch (l.getName()) {
-			case "close":
-				icon = Utills
-						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.CLOSE_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "restore":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RESTORE_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "hide":
-				icon = Utills
-						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HIDE_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			}
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			ImageIcon icon;
-			switch (l.getName()) {
-			case "close":
-				icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.CLOSE));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "restore":
-				icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.RESTORE));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "hide":
-				icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.HIDE));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
-		}
-	}
-
-	class SmallMenuMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			switch (l.getName()) {
-			case "about":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1)
-						showTaskInfo(currentTask);
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					showTaskInfo(currentTask);
-				break;
-			case "begining":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1)
-						showTaskInfo(currentTask);
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					showTaskInfo(currentTask);
-				break;
-			case "end":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1)
-						showTasks(currentTaskGroup);
-					else if (showedTask != null)
-						showedTask.start();
-				} else
-					showTasks(currentTaskGroup);
-				break;
-			case "results":
-				if (showedTask != null && !showedTask.isDontShowBreakingDialog()) {
-					showedTask.pause();
-					CustomDialog d1 = new CustomDialog(reabilitation,
-							InterfaceTextDefaults.getInstance().getDefault("sure_break_task"),
-							InterfaceTextDefaults.getInstance().getDefault("break"),
-							InterfaceTextDefaults.getInstance().getDefault("cancel"), true);
-					if (d1.getAnswer() == 1) {
-						showResults();
-					} else if (showedTask != null)
-						showedTask.start();
-				} else {
-					showResults();
-				}
-				break;
-			}
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			ImageIcon icon;
-			switch (l.getName()) {
-			case "about":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_ABOUT_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "begining":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_BEGINING_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "end":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_END_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "results":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_RESULTS_ROLLOVER));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			}
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			ImageIcon icon;
-			switch (l.getName()) {
-			case "about":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_ABOUT));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "begining":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_BEGINING));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "end":
-				icon = Utills
-						.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_END));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			case "results":
-				icon = Utills.createImageIcon(
-						ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.SMALL_MENU_RESULTS));
-				l.setIcon(icon);
-				l.updateUI();
-				break;
-			}
-		}
-
-		@Override
-		public void mousePressed(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
-		}
-	}
-
-	class GroupsMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			int i = Integer.parseInt(l.getName());
-			currentTaskGroup = i;
-			showTasks(i);
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			int i = Integer.parseInt(l.getName());
-			ImageIcon icon = Utills.createImageIcon(taskGroups[i].getRolloverImage());
-			l.setIcon(icon);
-			l.updateUI();
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			int i = Integer.parseInt(l.getName());
-			ImageIcon icon = Utills.createImageIcon(taskGroups[i].getImage());
-			l.setIcon(icon);
-			l.updateUI();
-		}
-
-		@Override
-		public void mousePressed(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
-		}
-	}
-
-	class TasksMouseListener implements MouseListener {
-		@Override
-		public void mouseClicked(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			int i = Integer.parseInt(l.getName());
-			currentTask = i;
-			showTaskInfo(i);
-		}
-
-		@Override
-		public void mouseEntered(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			int i = Integer.parseInt(l.getName());
-
-			ImageIcon icon = Utills.createImageIcon(tasks[i].getRolloverImage());
-			l.setIcon(icon);
-			actualPanel.revalidate();
-			actualPanel.repaint();
-		}
-
-		@Override
-		public void mouseExited(MouseEvent e) {
-			JLabel l = (JLabel) e.getSource();
-			int i = Integer.parseInt(l.getName());
-
-			ImageIcon icon = Utills.createImageIcon(tasks[i].getImage());
-			l.setIcon(icon);
-			actualPanel.revalidate();
-			actualPanel.repaint();
-		}
-
-		@Override
-		public void mousePressed(MouseEvent arg0) {
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent arg0) {
-		}
-	}
-
-	private class InternalEventHandler implements AWTEventListener {
-
-		@Override
-		public void eventDispatched(AWTEvent event) {
-			if (popup == null)
-				return;
-			if (MouseEvent.MOUSE_CLICKED == event.getID() && event.getSource() != tasksIcon) {
-				Set<Component> components = Utills.getAllComponents(popupMenuPanel);
-				boolean clickInPopup = false;
-				for (Component component : components) {
-					if (event.getSource() == component) {
-						clickInPopup = true;
-					}
-				}
-				if (!clickInPopup) {
-					popup.hide();
-				}
-			}
-		}
-
 	}
 }

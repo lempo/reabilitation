@@ -37,7 +37,7 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class TravelPanel extends JPanel {
 	private static final long serialVersionUID = 4766982486145454609L;
@@ -103,7 +103,7 @@ public class TravelPanel extends JPanel {
 
 	public void generate() {
 		rand = new Random(System.nanoTime());
-		Document doc = Utills.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.TRAVEL));
+		Document doc = Utils.openXML(TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.TRAVEL));
 		images = new JLabel[diff];
 		names = new JLabel[diff];
 		points = new Point[diff];
@@ -127,10 +127,10 @@ public class TravelPanel extends JPanel {
 				points[i] = new Point(Integer.parseInt(attr.getNamedItem("x").getNodeValue()),
 						Integer.parseInt(attr.getNamedItem("y").getNodeValue()));
 				images[i] = new JLabel();
-				ImageIcon icon = Utills.createImageIcon(attr.getNamedItem("image").getNodeValue());
+				ImageIcon icon = Utils.createImageIcon(attr.getNamedItem("image").getNodeValue());
 				images[i].setIcon(icon);
 				names[i] = new JLabel();
-				icon = Utills.createImageIcon(attr.getNamedItem("name").getNodeValue());
+				icon = Utils.createImageIcon(attr.getNamedItem("name").getNodeValue());
 				names[i].setIcon(icon);
 				usage[k] = 1;
 				i++;
@@ -545,7 +545,7 @@ public class TravelPanel extends JPanel {
 				+ InterfaceTextDefaults.getInstance().getDefault("travel_info") + "</div></html>");
 		t1.setOpaque(false);
 		t1.setPreferredSize(new Dimension((int) (this.getPreferredSize().getWidth() * 0.85),
-				40 + Utills.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
+				40 + Utils.calculateTextHeight(t1.getText(), (int) (this.getPreferredSize().getWidth() * 0.85), t1)));
 
 		JButton start = new JButton(InterfaceTextDefaults.getInstance().getDefault("begin_task"));
 		start.setUI(new ButtonCustomUI(new Color(38, 166, 154)));
@@ -609,7 +609,7 @@ public class TravelPanel extends JPanel {
 		public void paintComponent(Graphics g) {
 			Image im = null;
 			try {
-				im = ImageIO.read(Utills.class.getResource(image));
+				im = ImageIO.read(Utils.class.getResource(image));
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("problem reading file " + image);

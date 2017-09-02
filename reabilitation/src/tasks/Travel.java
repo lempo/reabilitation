@@ -12,10 +12,11 @@ import javax.swing.JLabel;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import dialogs.Dialogs;
+import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class Travel extends AbstractTask {
 	private static final long serialVersionUID = -1147367673510072304L;
@@ -53,6 +54,9 @@ public class Travel extends AbstractTask {
 		} catch (ServerConnectionException e) {
 			e.printStackTrace();
 			Dialogs.showServerConnectionErrorDialog(e);
+		} catch (ProgramFilesBrokenException e) {
+			e.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e);
 		}
 		showStandartResults();
 	}
@@ -124,7 +128,7 @@ public class Travel extends AbstractTask {
 
 			pause = true;
 
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
 			startIcon.setIcon(icon);
 			startIcon.updateUI();
@@ -144,7 +148,7 @@ public class Travel extends AbstractTask {
 
 			pause = false;
 
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
 			pauseIcon.setIcon(icon);
 			pauseIcon.updateUI();

@@ -34,7 +34,7 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class FiguresPanel extends JPanel {
 	private static final long serialVersionUID = 4766982486145454609L;
@@ -108,7 +108,7 @@ public class FiguresPanel extends JPanel {
 
 	public void generate() {
 		rand = new Random(System.nanoTime());
-		Document doc = Utills.openXML(
+		Document doc = Utils.openXML(
 				TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.FIGURES) + Integer.toString(diff) + ".xml");
 		topviews = new ArrayList<String>();
 		points = new ArrayList<HashMap<String, Point>>();
@@ -284,7 +284,7 @@ public class FiguresPanel extends JPanel {
 		});
 
 		JLabel left = new JLabel();
-		ImageIcon icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
+		ImageIcon icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW));
 		left.setIcon(icon);
 		left.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		left.addMouseListener(new MouseAdapter() {
@@ -301,7 +301,7 @@ public class FiguresPanel extends JPanel {
 		});
 
 		JLabel right = new JLabel();
-		icon = Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW_RIGHT));
+		icon = Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW_RIGHT));
 		right.setIcon(icon);
 		right.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		right.addMouseListener(new MouseAdapter() {
@@ -379,7 +379,7 @@ public class FiguresPanel extends JPanel {
 		public void paintComponent(Graphics g) {
 			Image im = null;
 			try {
-				im = ImageIO.read(Utills.class.getResource(image));
+				im = ImageIO.read(Utils.class.getResource(image));
 			} catch (IOException e) {
 				e.printStackTrace();
 				System.out.println("problem reading file " + image);

@@ -12,7 +12,7 @@ import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class ComboBoxCustomUI extends BasicComboBoxUI {
 
@@ -29,7 +29,7 @@ public class ComboBoxCustomUI extends BasicComboBoxUI {
 		btnL.setBorder(null);
 		btnL.setContentAreaFilled(false);
 		btnL.setIcon(
-				Utills.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW_BUTTON)));
+				Utils.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.ARROW_BUTTON)));
 		return btnL;
 	}
 

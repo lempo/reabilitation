@@ -70,45 +70,53 @@ public class HTTPClient {
 		return response.toString();
 	}
 
-	public static boolean loginSpec(String name, String pass) throws ServerConnectionException {
+	public static boolean loginSpec(String name, String pass) throws ServerConnectionException, ProgramFilesBrokenException, HddSerialScriptException {
 		String url = null;
 		try {
 			url = SERVER + "/api/loginspec.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8");
+					+ URLEncoder.encode(pass, "UTF8") 
+					+ "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		String response = makeRequest(url);
 
-		if (response.equals("1"))
+		if (!response.equals("0"))
 			return true;
 		else
 			return false;
 	}
 
-	public static boolean loginPatient(String name, String pass) throws ServerConnectionException {
+	public static boolean loginPatient(String name, String pass) throws ServerConnectionException, ProgramFilesBrokenException, HddSerialScriptException {
 		String url = null;
 		try {
 			url = SERVER + "/api/loginpatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8");
+					+ URLEncoder.encode(pass, "UTF8") 
+					+ "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
 		String response = makeRequest(url);
 
-		if (response.equals("1"))
+		if (!response.equals("0"))
 			return true;
 		else
 			return false;
 	}
 
-	public static String[][] listPatients() throws ServerConnectionException {
-		String url = SERVER + "/api/listpatients.xml";
+	public static String[][] listPatients() throws ServerConnectionException, ProgramFilesBrokenException {
+		String url = null;
+		try {
+			url = SERVER + "/api/listpatients.xml?key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
 		String response = makeRequest(url);
 
 		ArrayList<String[]> rows = new ArrayList<String[]>();
 
-		Document doc = Utills.openXMLFromString(response);
+		Document doc = Utils.openXMLFromString(response);
 		NodeList n = doc.getElementsByTagName("patient");
 		for (int i = 0; i < n.getLength(); i++) {
 			NodeList n1 = n.item(i).getChildNodes();
@@ -130,26 +138,30 @@ public class HTTPClient {
 
 		for (int i = 0; i < rows.size(); i++)
 			r[i] = rows.get(i);
-
 		return r;
 	}
 
-	public static void newPatient(String name, String pass) throws ServerConnectionException {
+	public static boolean newPatient(String name, String pass) throws ServerConnectionException, ProgramFilesBrokenException {
 		String url = null;
 		try {
-			url = SERVER + "/api/newpatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8");
+			url = SERVER + "/api/newpatient.xml?name=" + URLEncoder.encode(name, "UTF8") 
+				+ "&pass=" + URLEncoder.encode(pass, "UTF8") 
+				+ "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		makeRequest(url);
+		String response = makeRequest(url);
+		if (response.equals("0"))
+			return true;
+		else
+			return false;
 	}
 
-	public static void deletePatient(String name, String pass) throws ServerConnectionException {
+	public static void deletePatient(String name, String pass) throws ServerConnectionException, ProgramFilesBrokenException {
 		String url = null;
 		try {
 			url = SERVER + "/api/deletepatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8");
+					+ URLEncoder.encode(pass, "UTF8") + "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -157,7 +169,7 @@ public class HTTPClient {
 	}
 
 	public static void saveResult(String name, String pass, String taskName, int result, String taskGroup)
-			 throws ServerConnectionException {
+			 throws ServerConnectionException, ProgramFilesBrokenException {
 		String url = null;
 
 		// do we have such group?
@@ -197,20 +209,23 @@ public class HTTPClient {
 
 		// now add result
 		try {
-			url = SERVER + "/api/addresult.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8") + "&task_name=" + URLEncoder.encode(taskName, "UTF8") + "&result="
-					+ result;
+			url = SERVER + "/api/addresult.xml?name=" + URLEncoder.encode(name, "UTF8") 
+					+ "&pass=" + URLEncoder.encode(pass, "UTF8") 
+					+ "&task_name=" + URLEncoder.encode(taskName, "UTF8") 
+					+ "&result=" + result
+					+ "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
 		makeRequest(url);
 	}
 
-	public static String[][] findResults(String name, String pass)  throws ServerConnectionException {
+	public static String[][] findResults(String name, String pass)  throws ServerConnectionException, ProgramFilesBrokenException {
 		String url = null;
 		try {
-			url = SERVER + "/api/findresults.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8");
+			url = SERVER + "/api/findresults.xml?name=" + URLEncoder.encode(name, "UTF8") 
+				+ "&pass=" + URLEncoder.encode(pass, "UTF8")
+				+ "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -218,7 +233,7 @@ public class HTTPClient {
 
 		ArrayList<String[]> rows = new ArrayList<String[]>();
 
-		Document doc = Utills.openXMLFromString(response);
+		Document doc = Utils.openXMLFromString(response);
 		NodeList n = doc.getElementsByTagName("result");
 
 		for (int i = 0; i < n.getLength(); i++) {
@@ -247,7 +262,7 @@ public class HTTPClient {
 			}
 
 			response = makeRequest(url);
-			Document d = Utills.openXMLFromString(response);
+			Document d = Utils.openXMLFromString(response);
 			taskGroup = d.getElementsByTagName("name").item(0).getTextContent();
 
 			try {
@@ -257,7 +272,7 @@ public class HTTPClient {
 			}
 
 			response = makeRequest(url);
-			d = Utills.openXMLFromString(response);
+			d = Utils.openXMLFromString(response);
 			taskName = d.getElementsByTagName("name").item(0).getTextContent();
 
 			String s[] = { date, taskGroup, taskName, result };
@@ -273,26 +288,34 @@ public class HTTPClient {
 		return r;
 	}
 
-	public static void editPatient(String name, String pass, String nameNew, String passNew) throws ServerConnectionException {
+	public static boolean editPatient(String name, String pass, String nameNew, String passNew) throws ServerConnectionException, ProgramFilesBrokenException {
 		String url = null;
 		try {
 			url = SERVER + "/api/editpatient.xml?name=" + URLEncoder.encode(name, "UTF8") + "&pass="
-					+ URLEncoder.encode(pass, "UTF8") + "&name_new=" + URLEncoder.encode(nameNew, "UTF8") + "&pass_new="
-					+ URLEncoder.encode(passNew, "UTF8");
+					+ URLEncoder.encode(pass, "UTF8") + "&name_new=" + URLEncoder.encode(nameNew, "UTF8") 
+					+ "&pass_new=" + URLEncoder.encode(passNew, "UTF8")
+					+ "&key=" + URLEncoder.encode(Utils.getLicenceKey(), "UTF8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		makeRequest(url);
+		String response = makeRequest(url);
+		if (response.equals("0"))
+			return true;
+		else
+			return false;
 	}
 
-	public static void registerKey(String key, String userName) throws 
+	public static void registerKey(String key, String userName, String name, String pass) throws 
 	DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException, 
 	ServerConnectionException, KeyNotExistException, KeyAlreadyRegisteredException {
 		String url = null;
-		String hddSerial = Utills.getHDDSerialNumber();
+		String hddSerial = Utils.getHDDSerialNumber();
 		try {
-			url = SERVER + "/api/registerkey.xml?key=" + URLEncoder.encode(key, "UTF8") + "&user_name="
-					+ URLEncoder.encode(userName, "UTF8") + "&hddserial=" + URLEncoder.encode(hddSerial, "UTF8");
+			url = SERVER + "/api/registerkey.xml?key=" + URLEncoder.encode(key, "UTF8") 
+			+ "&user_name="	+ URLEncoder.encode(userName, "UTF8") 
+			+ "&hddserial=" + URLEncoder.encode(hddSerial, "UTF8")
+			+ "&name=" + URLEncoder.encode(name, "UTF8")
+			+ "&pass=" + URLEncoder.encode(pass, "UTF8");
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
@@ -309,7 +332,7 @@ public class HTTPClient {
 	DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException, 
 	ServerConnectionException, KeyNotRegisteredException, LisenceExpiredException {
 		String url = null;
-		String hddSerial = Utills.getHDDSerialNumber();
+		String hddSerial = Utils.getHDDSerialNumber();
 		try {
 			url = SERVER + "/api/checkkey.xml?key=" + URLEncoder.encode(key, "UTF8") + "&user_name="
 					+ URLEncoder.encode(userName, "UTF8") + "&hdd_serial=" + URLEncoder.encode(hddSerial, "UTF8");
@@ -328,7 +351,7 @@ public class HTTPClient {
 
 	public static int daysLeft(String key, String userName)  throws ServerConnectionException, DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException {
 		String url = null;
-		String hddSerial = Utills.getHDDSerialNumber();
+		String hddSerial = Utils.getHDDSerialNumber();
 		try {
 			url = SERVER + "/api/getdays.xml?key=" + URLEncoder.encode(key, "UTF8") + "&user_name="
 					+ URLEncoder.encode(userName, "UTF8") + "&hdd_serial=" + URLEncoder.encode(hddSerial, "UTF8");
@@ -343,7 +366,7 @@ public class HTTPClient {
 
 	public static String getFrom(String key, String userName) throws ServerConnectionException, DiskPermissionsException, ProgramFilesBrokenException, HddSerialScriptException {
 		String url = null;
-		String hddSerial = Utills.getHDDSerialNumber();
+		String hddSerial = Utils.getHDDSerialNumber();
 		try {
 			url = SERVER + "/api/getfrom.xml?key=" + URLEncoder.encode(key, "UTF8") + "&user_name="
 					+ URLEncoder.encode(userName, "UTF8") + "&hdd_serial=" + URLEncoder.encode(hddSerial, "UTF8");
@@ -376,7 +399,7 @@ public class HTTPClient {
 		if (response.equals("0"))
 			return null;
 
-		Document d = Utills.openXMLFromString(response);
+		Document d = Utils.openXMLFromString(response);
 		String l = d.getElementsByTagName("location").item(0).getTextContent();
 		return l;
 	}

@@ -10,6 +10,10 @@
 <string key="key_not_exist" value="Такой ключ не существует"/>
 <string key="error_dailog_content" value="Если у вас не получается решить проблему самостоятельно, сделайте скриншот ошибки и пришлите его на адрес support@komplimed.ru"/>
 <string key="lisence_expired" value="Срок лицензии истек!"/>
+<string key="create_login" value="Придумайте логин для входа в программу"/>
+<string key="create_pass" value="Придумайте пароль"/>
+<string key="user_exists" value="Такой пользователь уже существует"/>
+<string key="failed_login" value="Неверное_имя или_пароль"/>
 
 <string key="pause" value="ПАУЗА"/>
 <string key="answers" value="ПРАВИЛЬНЫЕ_ОТВЕТЫ"/>
@@ -33,6 +37,8 @@
 <string key="deleting" value="Удаление"/>
 <string key="authorization" value="АВТОРИЗАЦИЯ"/>
 <string key="new_user" value="Новый пользователь"/>
+<string key="create_new_user" value="Создать нового пользователя"/>
+<string key="create_new_user_heading" value="СОЗДАНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ"/>
 <string key="enter" value="Вход"/>
 <string key="enter2" value="Войти"/>
 <string key="save" value="Сохранить"/>

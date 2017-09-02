@@ -4,7 +4,7 @@ import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class InterfaceTextDefaults {
 	private static InterfaceTextDefaults instance;
@@ -22,7 +22,7 @@ public class InterfaceTextDefaults {
 	private InterfaceTextDefaults() {
 		fileName = TextLinkDefaults.getInstance().getLink(TextLinkDefaults.Key.INTERFACE);
 		map = new HashMap<String, String>();
-		Document doc = Utills.openXML(fileName);
+		Document doc = Utils.openXML(fileName);
 		NodeList n = doc.getElementsByTagName("string");
 		for (int i = 0; i < n.getLength(); i++) {
 			String s = n.item(i).getAttributes().getNamedItem("value").getNodeValue();

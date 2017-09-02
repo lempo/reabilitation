@@ -23,10 +23,11 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import dialogs.Dialogs;
+import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utills;
+import reabilitation.Utils;
 
 public class Coincidences extends AbstractTask {
 	private static final long serialVersionUID = -2008862322889925832L;
@@ -83,6 +84,9 @@ public class Coincidences extends AbstractTask {
 		} catch (ServerConnectionException e) {
 			e.printStackTrace();
 			Dialogs.showServerConnectionErrorDialog(e);
+		} catch (ProgramFilesBrokenException e) {
+			e.printStackTrace();
+			Dialogs.showFilesBrokenErrorDialog(e);
 		}
 		showStandartResults();
 	}
@@ -417,7 +421,7 @@ public class Coincidences extends AbstractTask {
 			pause = true;
 			startPauseTime = new Date().getTime();
 
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.START));
 			startIcon.setIcon(icon);
 			startIcon.updateUI();
@@ -439,7 +443,7 @@ public class Coincidences extends AbstractTask {
 			revalidate();
 			repaint();
 
-			ImageIcon icon = Utills
+			ImageIcon icon = Utils
 					.createImageIcon(ImageLinkDefaults.getInstance().getLink(ImageLinkDefaults.Key.PAUSE));
 			pauseIcon.setIcon(icon);
 			pauseIcon.updateUI();
