@@ -59,7 +59,7 @@ public class CustomTextField extends JTextField {
 		g.fillRoundRect(area.x, area.y, area.width - 1, area.height - 1, 5, 5);
 		g.setColor(border);
 		g.drawRoundRect(area.x, area.y, area.width - 1, area.height - 1, 5, 5);
-		String result = this.getText().replaceAll("   ", "");
+		String result = this.getText().replaceFirst("^\\s*", "");
 		this.setText("   " + result);
 		super.paintComponent(g);
 	}

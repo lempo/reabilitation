@@ -14,18 +14,20 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class CustomPasswordField extends JTextField {
 	private static final long serialVersionUID = -4303240544556069274L;
 	Color back = Color.WHITE;
 	Color border = new Color(204, 204, 204);
 
-	String hiht;
+	String hint;
 	String pass = "";
 
 	public CustomPasswordField(int i, String hint) {
 		super(i);
-		this.hiht = hint;
+		this.hint = hint;
 		this.setBorder(null);
 		this.setOpaque(false);
 		this.setFont(new Font("ArialNarrow", Font.PLAIN, 14));
@@ -40,7 +42,7 @@ public class CustomPasswordField extends JTextField {
 			public void focusGained(FocusEvent e) {
 				String s = getText().toString().trim();
 				if (s.equals(hint)) {
-					setText("   ");
+					setText("");
 					setForeground(new Color(69, 90, 100));
 				}
 			}
@@ -49,46 +51,31 @@ public class CustomPasswordField extends JTextField {
 			public void focusLost(FocusEvent e) {
 				String s = getText().toString().trim();
 				if (s.length() == 0) {
-					setText("   " + hint);
+					setText(hint);
 					setForeground(Color.GRAY);
 				}
 			}
 		});
 		
-		getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(DocumentEvent e) {
-			}
+		this.addKeyListener(new KeyListener() {
 
-			public void removeUpdate(DocumentEvent e) {
-				if (e.getOffset() > 0) {
-					if (e.getOffset() < 3) {
-						Runnable doHighlight = new Runnable() {
-					        @Override
-					        public void run() {
-					        	setText("   ");
-					        }
-					    };       
-					    SwingUtilities.invokeLater(doHighlight);
-					}
-					else {
-						pass = pass.substring(0, pass.length() - 1);
-					}
+			@Override
+			public void keyPressed(KeyEvent e) {}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+				if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {  
+			        if (pass.length() > 0)
+			        	pass = pass.substring(0, pass.length() - 1);
+			    }
+				else {
+					if (Character.isLetterOrDigit(e.getKeyChar()))
+						pass = pass + e.getKeyChar();
 				}
 			}
 
-			public void insertUpdate(DocumentEvent e) {
-				if (e.getOffset() > 0) {
-					Runnable doHighlight = new Runnable() {
-				        @Override
-				        public void run() {
-				        	pass = pass + getText().charAt(getText().length() - 1);
-				        	setText("   " + getText().substring(3, getText().length()).replaceAll(".", "*"));
-				        }
-				    };       
-				    SwingUtilities.invokeLater(doHighlight);
-				}
-			}
-
+			@Override
+			public void keyTyped(KeyEvent e) {}
 		});
 	}
 
@@ -100,12 +87,18 @@ public class CustomPasswordField extends JTextField {
 		g.fillRoundRect(area.x, area.y, area.width - 1, area.height - 1, 5, 5);
 		g.setColor(border);
 		g.drawRoundRect(area.x, area.y, area.width - 1, area.height - 1, 5, 5);
-		//String result = this.getPassword().toString().replaceAll("   ", "");
-		//this.setText("   " + result);
+		String result = getText()
+				.toString()
+				.replaceFirst("^\\s*", "");
+		if (!result.equals(hint))
+			result = pass
+					.replaceAll(".", "*");
+		this.setText("   " + result);
 		super.paintComponent(g);
 	}
 	
 	public String getPass() {
-		return pass;
+		System.out.println(pass);
+		return pass.trim();
 	}
 }

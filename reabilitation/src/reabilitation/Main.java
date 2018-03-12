@@ -1,5 +1,7 @@
 package reabilitation;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 
 import javax.swing.*;
@@ -66,12 +68,42 @@ public class Main {
 		// not registered yet
 		else {
 			// licence dialog
+			KeyListener letterNumberSpace = new KeyListener() {
+				@Override
+				public void keyPressed(KeyEvent e) {}
+				@Override
+				public void keyReleased(KeyEvent e) {}
+				@Override
+				public void keyTyped(KeyEvent e) {
+					if (!(e.getKeyCode() == KeyEvent.VK_BACK_SPACE || 
+							Character.isLetterOrDigit(e.getKeyChar()) ||
+							Character.isWhitespace(e.getKeyChar()))) {  
+				        e.consume();
+				    }
+				}
+			};
+			KeyListener letterNumber = new KeyListener() {
+				@Override
+				public void keyPressed(KeyEvent e) {}
+				@Override
+				public void keyReleased(KeyEvent e) {}
+				@Override
+				public void keyTyped(KeyEvent e) {
+					if (!(e.getKeyCode() == KeyEvent.VK_BACK_SPACE || 
+							Character.isLetterOrDigit(e.getKeyChar()))) {  
+				        e.consume();
+				    }
+				}
+			};
 			UIManager.put("OptionPane.cancelButtonText", InterfaceTextDefaults.getInstance().getDefault("cancel"));
 			UIManager.put("OptionPane.okButtonText", InterfaceTextDefaults.getInstance().getDefault("ok"));
 			JTextField name = new JTextField();
+			name.addKeyListener(letterNumberSpace);
 			JTextField key = new JTextField();
 			JTextField login = new JTextField();
+			login.addKeyListener(letterNumber);
 			JTextField pass = new JTextField();
+			pass.addKeyListener(letterNumber);
 			final JComponent[] inputs = new JComponent[] {
 					new JLabel(InterfaceTextDefaults.getInstance().getDefault("name_surname_patronymic") + ":"), name,
 					new JLabel(InterfaceTextDefaults.getInstance().getDefault("key") + ":"), key,
