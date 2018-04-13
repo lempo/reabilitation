@@ -11,7 +11,7 @@ import javax.swing.Popup;
 
 import customcomponent.MenuPanel;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class TasksPopupMenuHandler implements AWTEventListener  {
 

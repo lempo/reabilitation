@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class CustomLabel extends JLabel {
 	private static final long serialVersionUID = 3450780289569006011L;

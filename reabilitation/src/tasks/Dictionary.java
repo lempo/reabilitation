@@ -26,7 +26,7 @@ import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class Dictionary extends AbstractTask {
 	private static final long serialVersionUID = -3579652853460802289L;

@@ -12,7 +12,7 @@ import javax.swing.RowSorter;
 import javax.swing.table.TableCellRenderer;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class TableHeaderRenderer extends JLabel implements TableCellRenderer {
 

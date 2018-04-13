@@ -1,22 +1,27 @@
-package reabilitation;
+package reabilitation.utils;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.io.*;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;

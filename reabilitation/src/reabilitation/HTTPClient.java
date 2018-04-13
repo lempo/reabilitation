@@ -23,6 +23,7 @@ import exception.KeyNotRegisteredException;
 import exception.LisenceExpiredException;
 import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
+import reabilitation.utils.Utils;
 
 public class HTTPClient {
 
@@ -359,6 +360,8 @@ public class HTTPClient {
 			e1.printStackTrace();
 		}
 		String response = makeRequest(url);
+		if (response.equals("0"))
+			return 0;
 		response = response.substring(0, response.indexOf('/'));
 
 		return Integer.parseInt(response);

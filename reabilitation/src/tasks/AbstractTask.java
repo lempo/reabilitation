@@ -30,7 +30,7 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public abstract class AbstractTask extends JPanel {
 
@@ -67,7 +67,10 @@ public abstract class AbstractTask extends JPanel {
 	AbstractTask(int width, int height, String text, Reabilitation reabilitation, String userName,
 			String userCardNumber, String taskName, String taskGroupName) {
 		super();
-		this.setPreferredSize(new Dimension(width, height));
+		final Dimension dimension = new Dimension(width, height);
+		this.setPreferredSize(dimension);
+		this.setMinimumSize(dimension);
+		this.setMaximumSize(dimension);
 		this.setOpaque(false);
 		this.text = text;
 		this.reabilitation = reabilitation;
@@ -143,8 +146,10 @@ public abstract class AbstractTask extends JPanel {
 		beginingIcon.addMouseListener(iconsListener);
 		beginingIcon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-		bottomPanel.setPreferredSize(
-				new Dimension((int) this.getPreferredSize().getWidth(), startIcon.getIcon().getIconHeight() + 30));
+		final Dimension bottomPanelDimension = new Dimension((int) this.getPreferredSize().getWidth(), startIcon.getIcon().getIconHeight() + 30);
+		bottomPanel.setPreferredSize(bottomPanelDimension);
+		bottomPanel.setMinimumSize(bottomPanelDimension);
+		bottomPanel.setMaximumSize(bottomPanelDimension);
 
 		GridBagConstraints c = new GridBagConstraints();
 

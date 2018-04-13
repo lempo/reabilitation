@@ -33,7 +33,7 @@ import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class Listen extends AbstractTask {
 	private static final long serialVersionUID = 118086317031257325L;

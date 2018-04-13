@@ -29,7 +29,7 @@ package jdatepicker;
 
 import jdatepicker.graphics.JNextIcon;
 import jdatepicker.graphics.JPreviousIcon;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

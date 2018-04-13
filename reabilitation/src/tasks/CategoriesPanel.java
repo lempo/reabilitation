@@ -41,9 +41,9 @@ import customuiandrender.ButtonCustomUI;
 import customuiandrender.ProgressBarCustomUI;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
-public class CategoriesPanel extends JPanel {
+public class CategoriesPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = -9130625944713597822L;
 	Categories w;
@@ -86,7 +86,7 @@ public class CategoriesPanel extends JPanel {
 	private boolean canPause = true;
 
 	public CategoriesPanel(int width, int height, int diff, Categories w) {
-		super();
+		super(width, height);
 		this.w = w;
 
 		switch (diff) {
@@ -109,10 +109,6 @@ public class CategoriesPanel extends JPanel {
 			cols = 3;
 			break;
 		}
-
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
 
 		timer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {

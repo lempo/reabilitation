@@ -4,7 +4,7 @@ import java.util.HashMap;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class InterfaceTextDefaults {
 	private static InterfaceTextDefaults instance;

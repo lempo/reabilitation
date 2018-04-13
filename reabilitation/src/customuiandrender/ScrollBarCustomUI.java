@@ -12,7 +12,7 @@ import javax.swing.JScrollBar;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class ScrollBarCustomUI extends BasicScrollBarUI {
 

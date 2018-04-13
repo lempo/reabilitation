@@ -15,7 +15,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -30,18 +29,13 @@ import javax.swing.JProgressBar;
 import javax.swing.JTextPane;
 import javax.swing.Timer;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import customuiandrender.ButtonCustomUI;
 import customuiandrender.ProgressBarCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
-import defaults.TextLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
-public class MatrixPanel extends JPanel {
+public class MatrixPanel extends AbstractPanel {
 	private static final long serialVersionUID = 2810359745297138538L;
 	Matrix w;
 	Random rand;
@@ -100,7 +94,7 @@ public class MatrixPanel extends JPanel {
 	private int[] selectedControl;
 
 	public MatrixPanel(int width, int height, int diff, Matrix w) {
-		super();
+		super(width, height);
 		this.diff = diff;
 		this.w = w;
 
@@ -131,9 +125,6 @@ public class MatrixPanel extends JPanel {
 			break;
 		}
 
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
 		generate();
 		showInfo_1();
 	}

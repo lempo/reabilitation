@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class PairsPanel extends JPanel {
 

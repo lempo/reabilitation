@@ -9,7 +9,7 @@ import javax.swing.JLabel;
 import customcomponent.CustomDialog;
 import defaults.ImageLinkDefaults;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class SmallMenuMouseListener implements MouseListener  {
 	@Override

@@ -20,7 +20,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class SudokuPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class SudokuPanel extends AbstractPanel implements MouseListener, MouseMotionListener {
 
 	private static final long serialVersionUID = -2648074700623502235L;
 	private int width;
@@ -55,14 +55,11 @@ public class SudokuPanel extends JPanel implements MouseListener, MouseMotionLis
 	private Sudoku w;
 
 	public SudokuPanel(int width, int height, int diff, Sudoku w) {
-		super();
+		super(width, height);
 		this.width = width;
 		this.height = height;
 		this.diff = diff;
 		this.w = w;
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
-		this.setPreferredSize(new Dimension(width, height));
 		grid = new int[9][9];
 		user = new int[9][9];
 		menu = new int[9][9];

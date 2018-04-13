@@ -27,7 +27,7 @@ import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class Coincidences extends AbstractTask {
 	private static final long serialVersionUID = -2008862322889925832L;

@@ -35,16 +35,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import customcomponent.CustomDialog;
 import customuiandrender.ButtonCustomUI;
 import customuiandrender.LabelCustomUI;
 import customuiandrender.ProgressBarCustomUI;
 import customuiandrender.ScrollBarCustomUI;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
-public class WordsPanel extends JPanel {
+public class WordsPanel extends AbstractPanel {
 	private static final long serialVersionUID = 2810359745297138538L;
 	Words w;
 	Random rand;
@@ -96,7 +95,7 @@ public class WordsPanel extends JPanel {
 	private boolean canPause = true;
 
 	public WordsPanel(int width, int height, int diff, Words w) {
-		super();
+		super(width, height);
 		this.diff = diff;
 		this.w = w;
 
@@ -126,10 +125,7 @@ public class WordsPanel extends JPanel {
 			remindTime = 4;
 			break;
 		}
-
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
+		
 		generate();
 		showInfo_1();
 	}

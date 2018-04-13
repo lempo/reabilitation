@@ -9,7 +9,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class CoincidencesPanel extends JPanel {
+public class CoincidencesPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 372760270300425907L;
 	private int width;
@@ -44,11 +44,9 @@ public class CoincidencesPanel extends JPanel {
 	Random rand;
 
 	public CoincidencesPanel(int width, int height) {
-		super();
+		super(width, height);
 		this.width = width;
 		this.height = height;
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
 	}
 
 	public void paintComponent(Graphics gr) {

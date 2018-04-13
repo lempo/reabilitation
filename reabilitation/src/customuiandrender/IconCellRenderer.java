@@ -8,7 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class IconCellRenderer extends JLabel implements TableCellRenderer {
 	private static final long serialVersionUID = 6892736819545716510L;

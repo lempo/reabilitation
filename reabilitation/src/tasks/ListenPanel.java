@@ -33,9 +33,9 @@ import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
 import reabilitation.Sound;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
-public class ListenPanel extends JPanel {
+public class ListenPanel extends AbstractPanel {
 
 	private static final long serialVersionUID = 238981861822553433L;
 	Listen w;
@@ -77,7 +77,7 @@ public class ListenPanel extends JPanel {
 	private float volume;
 
 	public ListenPanel(int width, int height, int diff, Listen w, float volume) {
-		super();
+		super(width, height);
 		this.diff = diff;
 		this.w = w;
 		this.volume = volume;
@@ -105,10 +105,6 @@ public class ListenPanel extends JPanel {
 			cols = 3;
 			break;
 		}
-
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
 
 		timer = new Timer(1000, new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {

@@ -34,9 +34,9 @@ import customuiandrender.ButtonCustomUI;
 import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
-public class FiguresPanel extends JPanel {
+public class FiguresPanel extends AbstractPanel {
 	private static final long serialVersionUID = 4766982486145454609L;
 	Figures w;
 	Random rand;
@@ -65,13 +65,10 @@ public class FiguresPanel extends JPanel {
 	private int viewedPoint = 0;
 
 	public FiguresPanel(int width, int height, int diff, Figures w) {
-		super();
+		super(width, height);
 		this.diff = diff;
 		this.w = w;
 
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
 		generate();
 		switch (diff) {
 		case Figures.EASY:

@@ -12,7 +12,7 @@ import customcomponent.CustomDialog;
 import customcomponent.MenuPanel;
 import defaults.ImageLinkDefaults;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class MenuMouseListener implements MouseListener  {
 	@Override

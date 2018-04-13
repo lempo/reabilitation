@@ -7,7 +7,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class GroupsMouseListener implements MouseListener  {
 	@Override

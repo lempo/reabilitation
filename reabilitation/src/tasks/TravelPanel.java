@@ -34,12 +34,11 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import customuiandrender.ButtonCustomUI;
-import defaults.ImageLinkDefaults;
 import defaults.InterfaceTextDefaults;
 import defaults.TextLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
-public class TravelPanel extends JPanel {
+public class TravelPanel extends AbstractPanel {
 	private static final long serialVersionUID = 4766982486145454609L;
 	Travel w;
 	Random rand;
@@ -83,13 +82,10 @@ public class TravelPanel extends JPanel {
 	NewMouseListener clickListener;
 
 	public TravelPanel(int width, int height, int diff, Travel w) {
-		super();
+		super(width, height);
 		this.diff = diff;
 		this.w = w;
 
-		this.setPreferredSize(new Dimension(width, height));
-		this.setDoubleBuffered(true);
-		this.setOpaque(false);
 		generate();
 		showInfo_1();
 	}

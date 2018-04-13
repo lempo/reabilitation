@@ -16,7 +16,7 @@ import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class Categories extends AbstractTask {
 	private static final long serialVersionUID = -4922197662649312377L;

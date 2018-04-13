@@ -16,6 +16,7 @@ import exception.KeyNotRegisteredException;
 import exception.LisenceExpiredException;
 import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
+import reabilitation.utils.Utils;
 
 /**
  * 

@@ -12,7 +12,7 @@ import javax.swing.Popup;
 
 import defaults.ImageLinkDefaults;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class MenuPanel extends JPanel {
 	private static final long serialVersionUID = 1988458431909302046L;

@@ -12,7 +12,7 @@ import javax.swing.plaf.basic.BasicComboPopup;
 import javax.swing.plaf.basic.ComboPopup;
 
 import defaults.ImageLinkDefaults;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class ComboBoxCustomUI extends BasicComboBoxUI {
 

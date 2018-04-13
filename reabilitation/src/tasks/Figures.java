@@ -16,7 +16,7 @@ import exception.ProgramFilesBrokenException;
 import exception.ServerConnectionException;
 import reabilitation.HTTPClient;
 import reabilitation.Reabilitation;
-import reabilitation.Utils;
+import reabilitation.utils.Utils;
 
 public class Figures extends AbstractTask {
 	private static final long serialVersionUID = 2202573537223557309L;
